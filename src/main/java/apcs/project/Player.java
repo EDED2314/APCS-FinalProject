@@ -39,10 +39,10 @@ class Rectangle2D {
     public double width;
     public double height;
 
-    private Point p1;
-    private Point p2;
-    private Point p3;
-    private Point p4;
+    private Point2D p1;
+    private Point2D p2;
+    private Point2D p3;
+    private Point2D p4;
 
     public Rectangle2D(double x, double y, double width, double height) {
         this.x = x;
