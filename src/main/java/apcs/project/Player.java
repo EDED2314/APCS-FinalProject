@@ -50,6 +50,11 @@ class Rectangle2D {
         this.width = width;
         this.height = height;
 
+        //clockwise assignment
+        p1 = new Point2D(x,y);
+        p2 = new Point2D(x+width, y);
+        p3 = new Point2D(x+width, y+height);
+        p4 = new Point2D(x, y+height);
     }
 
     public boolean intersects(Rectangle2D other) {
