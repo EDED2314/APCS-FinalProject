@@ -6,15 +6,13 @@ import java.awt.geom.*;
 
 public class Player {
     private double playerX;
-    private Point p1;
-    private Point p2;
-    private Point p3;
-    private Point p4;
+
 
     public void render(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
 
         Rectangle2D rect = new Rectangle2D(10.5, 20.3, 30.2, 40.7);
+
         g2.setColor(Color.WHITE);
         g2.draw(rect.toRectangle());
 
@@ -31,11 +29,18 @@ class Rectangle2D {
     public double width;
     public double height;
 
+    private Point p1;
+    private Point p2;
+    private Point p3;
+    private Point p4;
+
     public Rectangle2D(double x, double y, double width, double height) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
+
+
     }
 
     public boolean intersects(Rectangle2D other) {
@@ -46,6 +51,10 @@ class Rectangle2D {
     }
 
     // Convert to integer Rectangle when needed for rendering
+    public void render(Graphics g){
+
+    }
+
     public Rectangle toRectangle() {
         return new Rectangle((int)x, (int)y, (int)width, (int)height);
     }
