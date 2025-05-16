@@ -9,17 +9,27 @@ public class Player {
 
 
     public void render(Graphics g) {
-        Graphics2D g2 = (Graphics2D) g;
+//        Graphics2D g2 = (Graphics2D) g;
+//
+//        Rectangle2D rect = new Rectangle2D(10.5, 20.3, 30.2, 40.7);
+//
+//        g2.setColor(Color.WHITE);
+//        g2.draw(rect.toRectangle());
 
-        Rectangle2D rect = new Rectangle2D(10.5, 20.3, 30.2, 40.7);
+    }
+}
 
-        g2.setColor(Color.WHITE);
-        g2.draw(rect.toRectangle());
+class Point2D{
+    public double x;
+    public double y;
 
-//        g2.setColor(Color.RED);
-//        for (Rectangle enemy : enemies) {
-//            g2.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
-//        }
+    public Point2D(double x, double y){
+        this.x = x;
+        this.y = y;
+    }
+
+    public Point getPoint(){
+        return new Point((int) x, (int)y);
     }
 }
 
@@ -40,7 +50,6 @@ class Rectangle2D {
         this.width = width;
         this.height = height;
 
-
     }
 
     public boolean intersects(Rectangle2D other) {
@@ -55,7 +64,7 @@ class Rectangle2D {
 
     }
 
-    public Rectangle toRectangle() {
-        return new Rectangle((int)x, (int)y, (int)width, (int)height);
-    }
+//    public Rectangle toRectangle() {
+//        return new Rectangle((int)x, (int)y, (int)width, (int)height);
+//    }
 }
