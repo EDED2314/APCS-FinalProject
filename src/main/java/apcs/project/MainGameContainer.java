@@ -15,6 +15,8 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener  
     private volatile boolean running = false;
     private boolean[] keys = new boolean[256];
 
+
+    //player stuff yk yk
     private int playerX = 100, playerY = 100;
     private int playerSpeed = 5;
     private ArrayList<Rectangle> enemies = new ArrayList<Rectangle>();
@@ -57,21 +59,26 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener  
 
     @Override
     public void run() {
+        // fps control is interesting
         long startTime;
         long elapsed;
         long wait;
         long targetTime = 1000 / TARGET_FPS;
 
-        // Game loop
+        // Game loop!!!! 😍😍😍😍
         while (running) {
             startTime = System.nanoTime();
 
+
+            //update function to update everything in that tick
             update();
+            //repaint function after updating everything
             repaint();
 
             // FPS control
             elapsed = System.nanoTime() - startTime;
             wait = targetTime - elapsed / 1000000;
+            //^^^what we do is make the system wait for that much time in case its too fast so it doesn't render infinitely
 
             if (wait > 0) {
                 try {
@@ -108,31 +115,25 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener  
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        // Clear screen
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, WIDTH, HEIGHT);
 
-        // Render game
         render(g);
 
-        // Draw debug info
         g.setColor(Color.WHITE);
         g.drawString("Player Position: " + playerX + ", " + playerY, 10, 20);
     }
 
     private void render(Graphics g) {
-        // Draw player
         g.setColor(Color.BLUE);
         g.fillRect(playerX, playerY, 50, 50);
 
-        // Draw enemies
         g.setColor(Color.RED);
         for (Rectangle enemy : enemies) {
             g.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
         }
     }
 
-    // KeyListener methods
     @Override
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() < keys.length) {
@@ -151,7 +152,7 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener  
     public void keyTyped(KeyEvent e) {}
 
     public static void main(String[] args) {
-        JFrame frame = new JFrame("Enhanced 2D Game");
+        JFrame frame = new JFrame("Multiplayer Pong");
         MainGameContainer game = new MainGameContainer();
 
         frame.add(game);

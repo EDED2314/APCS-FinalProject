@@ -23,7 +23,7 @@ public class Ball {
 
     public void draw(Graphics2D g2) {
 
-        java.awt.Rectangle rect = new Rectangle(center_x - size/ 2, center_y - size / 2, size, size);
+        Rectangle rect = new Rectangle(center_x - size/ 2, center_y - size / 2, size, size);
         g2.draw(rect);
 
     }
