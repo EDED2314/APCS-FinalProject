@@ -3,15 +3,18 @@ package apcs.project;
 import java.awt.*;
 
 public class Player extends CustomRectangle {
-    static int width = 30;
-    static int height = 10;
+    static final int width = 30;
+    static final int height = 10;
+    static final double MAX_BOUNCE_ANGLE = 1.308996939;
 
     Player(double centerX, double centerY, double angle, double dx, double dy) {
         super(centerX, centerY, width, height, angle, dx, dy);
     }
 
-    public void update(int dir){
-        super.update(dir);
+
+
+    public void update(){
+        super.update();
     }
 
 

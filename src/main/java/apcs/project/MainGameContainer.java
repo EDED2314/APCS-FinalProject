@@ -14,9 +14,12 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
             new CustomPoint(10, 10),
             new CustomPoint(10, 590),
             new CustomPoint(10, 300),
-            new CustomPoint(810, 10),
-            new CustomPoint(810, 590),
-            new CustomPoint(810, 300)};
+            new CustomPoint(790, 10),
+            new CustomPoint(790, 590),
+            new CustomPoint(790, 300),
+            new CustomPoint(400, 300)};
+
+    private static final double baseVelocity = 5;
 
     private Thread gameThread;
     private volatile boolean running = false;
@@ -34,20 +37,31 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
         setFocusable(true);
         addKeyListener(this);
 
-        Track left = new Track(defaultConfig[0], defaultConfig[1], defaultConfig[2], 90,0, 5 );
-        Track right = new Track(defaultConfig[3], defaultConfig[4], defaultConfig[5], 90,0, 5 );
+        balls = new ArrayList<Ball>();
         tracks = new ArrayList<Track>();
+
+        Track left = new Track(defaultConfig[0], defaultConfig[1], defaultConfig[2], 90, 0, 5);
+        Track right = new Track(defaultConfig[3], defaultConfig[4], defaultConfig[5], 90, 0, 5);
         tracks.add(left);
         tracks.add(right);
 
         //TODO: add random generation function
         //TODO: add random speed function
-        Ball b1 = new Ball(10, 410, 300, 5, 0);
-        b1.setVelocity(5,0);
-        balls = new ArrayList<Ball>();
+        Ball b1 = new Ball(10, (int) defaultConfig[6].x, (int) defaultConfig[6].y, 5, 0);
+        initBallVelocity(b1);
         balls.add(b1);
 
 
+    }
+
+    private void initBallVelocity(Ball b) {
+        double angle = (Math.random() * 90 - 45) + 0.01; //generate random angle from -45 45
+        double dx = baseVelocity * Math.cos(angle);
+        double dy = baseVelocity * Math.sin(angle);
+        b.setVelocity(dx, dy);
+    }
+
+    private void initTrack() {
 
     }
 
@@ -114,29 +128,35 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
 
     private void update() {
         //default config for now
-        if (keys[KeyEvent.VK_A]) tracks.get(0).update(-1);
-        if (keys[KeyEvent.VK_D]) tracks.get(0).update(1);
+        //in our coordinate system going down is positive 1 and going up is negative 1...
+        if (keys[KeyEvent.VK_A]) { //-1
+            tracks.get(0).setDir(-1);
+            tracks.get(0).update();
+        }
+        if (keys[KeyEvent.VK_D]) { //1
+            tracks.get(0).setDir(1);
+            tracks.get(0).update();
+        }
+        if (keys[KeyEvent.VK_J]) {
+            tracks.get(1).setDir(-1);
+            tracks.get(1).update();
+        }
+        if (keys[KeyEvent.VK_L]) {
+            tracks.get(1).setDir(1);
+            tracks.get(1).update();
+        }
 
-        if (keys[KeyEvent.VK_J]) tracks.get(1).update(-1);
-        if (keys[KeyEvent.VK_L]) tracks.get(1).update(1);
+        for (Ball ball : balls) {
+            ball.update();
+            for (Track t : tracks) {
+                if (ball.intersects(t)) {
+                    ball.setNewVelocity(t);
+                }
+            }
 
-        //TODO: calculate new traj for ball... hmm using velocity vectors?
-//        for (Ball ball: balls){
-//            //TODO: calculate new vel vector then set it
-//
-//            ball.update(1);
-//        }
+        }
 
-        //TODO: collsion detection
 
-//        // Simple collision detection
-//        Rectangle playerRect = new Rectangle(playerX, playerY, 50, 50);
-//        for (Rectangle enemy : enemies) {
-//            if (playerRect.intersects(enemy)) {
-//                // Handle collision
-//                System.out.println("Collision detected!");
-//            }
-//        }
     }
 
     @Override
@@ -155,16 +175,12 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
 
     private void render(Graphics g) {
         Graphics2D g2d = (Graphics2D) g.create();
-        for (Track  t : tracks){
+        for (Track t : tracks) {
             t.render(g2d);
         }
-//        g.setColor(Color.BLUE);
-//        g.fillRect(playerX, playerY, 50, 50);
-//
-//        g.setColor(Color.RED);
-//        for (Rectangle enemy : enemies) {
-//            g.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
-//        }
+        for (Ball b : balls) {
+            b.render(g2d);
+        }
     }
 
     @Override

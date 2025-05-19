@@ -13,4 +13,8 @@ public class CustomPoint {
         return Math.sqrt((other.x - x) * (other.x - x) + (other.y - y) * (other.y - y));
     }
 
+    public static double distance(double x1, double y1, double x2, double y2) {
+        return Math.sqrt((x1-x2) * (x1-x2) + (y1-y2) * (y1-y2));
+    }
+
 }

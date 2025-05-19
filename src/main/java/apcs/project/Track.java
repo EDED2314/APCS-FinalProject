@@ -18,24 +18,24 @@ public class Track extends Player {
     }
 
     //track update logic
-    public void update(int dir) {
+    public void update() {
         double dis1 = p1.distance(new CustomPoint(super.center_x, super.center_y));
         double dis2 = p2.distance(new CustomPoint(super.center_x, super.center_y));
         if (dis1 < boundaryMinDistance){
-            if (dir == 1){
-                super.update(dir);
+            if (super.dir == 1){
+                super.update();
             }else{
                 System.out.println("Out of bounds");
             }
         }
         else if (dis2 < boundaryMinDistance){
-            if (dir == -1){
-                super.update(dir);
+            if (super.dir == -1){
+                super.update();
             }else{
                 System.out.println("Out of bounds");
             }
         }else{
-            super.update(dir);
+            super.update();
         }
 
 

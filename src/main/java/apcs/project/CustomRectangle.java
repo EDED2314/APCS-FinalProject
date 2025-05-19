@@ -9,6 +9,7 @@ public class CustomRectangle {
     public double center_y;
     public double dx;
     public double dy;
+    public int dir;
 
     final private double width;
     final private double height;
@@ -120,7 +121,16 @@ public class CustomRectangle {
         return new CustomPoint(rotated_X + center_x, rotated_Y + center_y);
     }
 
-    public void update(int dir) {
+    public void setDir(int dir){
+        this.dir = dir;
+    }
+
+    public void setVelocity(double dx, double dy) {
+        this.dx = dx;
+        this.dy = dy;
+    }
+
+    public void update() {
         double cos = Math.cos(angle);
         double sin = Math.sin(angle);
         if (cos != 0){
