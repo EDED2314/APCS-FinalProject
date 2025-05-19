@@ -1,8 +1,6 @@
 package apcs.project;
 
 import java.awt.*;
-import java.awt.geom.*;
-
 
 public class Player extends CustomRectangle {
     static int width = 10;
@@ -13,13 +11,11 @@ public class Player extends CustomRectangle {
     }
 
     public void update(){
-
+        super.update();
     }
 
 
     public void render(Graphics2D g2d) {
         super.render(g2d);
-
-
     }
 }

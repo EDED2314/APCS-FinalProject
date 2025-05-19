@@ -7,13 +7,12 @@ import java.awt.geom.AffineTransform;
 public class CustomRectangle {
     public double center_x;
     public double center_y;
+    public double dx;
+    public double dy;
 
-    private double dx;
-    private double dy;
-
-    private double width;
-    private double height;
-    private CustomPoint[] corners;
+    final private double width;
+    final private double height;
+    final private CustomPoint[] corners;
     private double angle; //radians
 
     public CustomRectangle(double center_x, double center_y, double width, double height, double angle, double dx, double dy) {
@@ -122,7 +121,8 @@ public class CustomRectangle {
     }
 
     public void update(){
-
+        center_x += dx;
+        center_y += dy;
     }
 
     public void render(Graphics2D g2d) {

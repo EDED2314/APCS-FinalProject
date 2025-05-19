@@ -3,10 +3,6 @@ package apcs.project;
 import java.awt.*;
 
 public class Ball extends CustomRectangle {
-    private double dx;
-    private double dy;
-
-
     //case when there are any amount players
     Ball(int size, double vX, double vY) {
         super(0, 0, size, size, 0, vX, vY);
@@ -17,13 +13,12 @@ public class Ball extends CustomRectangle {
         super(center_x, center_y, size, size, 0, vX, vY);
     }
 
-    public void update(){
+    public void update() {
 
     }
 
     public void render(Graphics2D g2d) {
         super.render(g2d);
-        g2d.dispose();
     }
 
 }
