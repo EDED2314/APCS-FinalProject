@@ -17,11 +17,11 @@ public class Track extends Player {
     }
 
     //track update logic
-    public void update() {
+    public void update(int dir) {
         double dis1 = p1.distance(new CustomPoint(super.center_x, super.center_y));
         double dis2 = p2.distance(new CustomPoint(super.center_x, super.center_y));
         if ((dis1 > boundaryMinDistance) && (dis2 > boundaryMinDistance)) {
-            super.update();
+            super.update(dir);
         }
     }
 
@@ -29,9 +29,11 @@ public class Track extends Player {
     public void render(Graphics2D g2d) {
         super.render(g2d);
 
+        g2d.setColor(Color.WHITE);
         g2d.setStroke(new BasicStroke(3));
         g2d.drawLine((int) p1.x, (int) p1.y, (int) p2.x, (int) p2.y);
         g2d.setStroke(new BasicStroke());
+        g2d.setColor(Color.BLACK);
     }
 
 

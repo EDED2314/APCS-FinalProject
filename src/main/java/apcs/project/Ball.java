@@ -13,12 +13,17 @@ public class Ball extends CustomRectangle {
         super(center_x, center_y, size, size, 0, vX, vY);
     }
 
-    public void update() {
-
+    public void update(int dir) {
+        super.update(dir);
     }
 
     public void render(Graphics2D g2d) {
         super.render(g2d);
+    }
+
+    public void setVelocity(double dx, double dy){
+        super.dx = dx;
+        super.dy = dy;
     }
 
 }

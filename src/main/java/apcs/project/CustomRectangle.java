@@ -120,9 +120,15 @@ public class CustomRectangle {
         return new CustomPoint(rotated_X + center_x, rotated_Y + center_y);
     }
 
-    public void update(){
-        center_x += dx;
-        center_y += dy;
+    public void update(int dir) {
+        double cos = Math.cos(angle);
+        double sin = Math.sin(angle);
+        if (cos != 0){
+            center_x += dx * dir * (cos/Math.abs(cos));
+        }
+        if (sin != 0){
+            center_y += dy * dir * (sin/Math.abs(sin));
+        }
     }
 
     public void render(Graphics2D g2d) {
@@ -136,12 +142,14 @@ public class CustomRectangle {
 
         g2d.rotate(angle, center_x, center_y);
 
+        g2d.setColor(Color.WHITE);
         g2d.fillRect(
                 (int) (center_x - width / 2),
                 (int) (center_y - height / 2),
                 (int) width,
                 (int) height
         );
+        g2d.setColor(Color.BLACK);
 
         g2d.setTransform(oldTransform);
 

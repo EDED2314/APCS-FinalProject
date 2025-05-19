@@ -10,8 +10,8 @@ public class Player extends CustomRectangle {
         super(centerX, centerY, width, height, angle, dx, dy);
     }
 
-    public void update(){
-        super.update();
+    public void update(int dir){
+        super.update(dir);
     }
 
 
