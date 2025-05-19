@@ -2,49 +2,51 @@ package apcs.project;
 
 import java.awt.*;
 
-public class Track extends Player {
+public class Track {
     static double boundaryMinDistance = 10;
     final private CustomPoint p1; //start point
     final private CustomPoint p2; //end point (boundary)
-    // private CustomPoint p3; //center of track, where player will be rendered initially
+    private Player p;
 
     //angle is in degrees
     Track(CustomPoint bound1, CustomPoint bound2, CustomPoint center, double angle, double dx, double dy) {
-        super(center.x, center.y, angle / 57.3, dx, dy);
-        // p3 = center;
         p1 = bound1;
         p2 = bound2;
-
+        p = new Player(center.x, center.y, angle / 57.3, dx, dy);
     }
+
+    public Player getPlayer() {
+        return p;
+    }
+
 
     //track update logic
     public void update() {
-        double dis1 = p1.distance(new CustomPoint(super.center_x, super.center_y));
-        double dis2 = p2.distance(new CustomPoint(super.center_x, super.center_y));
-        if (dis1 < boundaryMinDistance){
-            if (super.dir == 1){
-                super.update();
-            }else{
+        double dis1 = p1.distance(new CustomPoint(p.center_x, p.center_y));
+        double dis2 = p2.distance(new CustomPoint(p.center_x, p.center_y));
+        if (dis1 < boundaryMinDistance) {
+            if (p.dir == 1) {
+                p.update();
+            } else {
                 System.out.println("Out of bounds");
             }
-        }
-        else if (dis2 < boundaryMinDistance){
-            if (super.dir == -1){
-                super.update();
-            }else{
+        } else if (dis2 < boundaryMinDistance) {
+            if (p.dir == -1) {
+                p.update();
+            } else {
                 System.out.println("Out of bounds");
             }
-        }else{
-            super.update();
+        } else {
+            p.update();
         }
-
 
 
     }
 
+
     //track render logic
     public void render(Graphics2D g2d) {
-        super.render(g2d);
+        p.render(g2d);
 
         g2d.setColor(Color.WHITE);
         g2d.setStroke(new BasicStroke(3));

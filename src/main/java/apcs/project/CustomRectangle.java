@@ -9,12 +9,13 @@ public class CustomRectangle {
     public double center_y;
     public double dx;
     public double dy;
-    public int dir;
+    public int dir = 1;
+    public double angle; //radians
 
     final private double width;
     final private double height;
     final private CustomPoint[] corners;
-    private double angle; //radians
+
 
     public CustomRectangle(double center_x, double center_y, double width, double height, double angle, double dx, double dy) {
         this.center_x = center_x;
@@ -121,7 +122,7 @@ public class CustomRectangle {
         return new CustomPoint(rotated_X + center_x, rotated_Y + center_y);
     }
 
-    public void setDir(int dir){
+    public void setDir(int dir) {
         this.dir = dir;
     }
 
@@ -131,14 +132,8 @@ public class CustomRectangle {
     }
 
     public void update() {
-        double cos = Math.cos(angle);
-        double sin = Math.sin(angle);
-        if (cos != 0){
-            center_x += dx * dir * (cos/Math.abs(cos));
-        }
-        if (sin != 0){
-            center_y += dy * dir * (sin/Math.abs(sin));
-        }
+        center_x += dx * dir;
+        center_y += dy * dir;
     }
 
     public void render(Graphics2D g2d) {

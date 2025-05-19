@@ -14,7 +14,14 @@ public class Player extends CustomRectangle {
 
 
     public void update(){
-        super.update();
+        double cos = Math.cos(super.angle);
+        double sin = Math.sin(super.angle);
+        if (cos != 0){
+            center_x += dx * dir * (cos/Math.abs(cos));
+        }
+        if (sin != 0){
+            center_y += dy * dir * (sin/Math.abs(sin));
+        }
     }
 
 

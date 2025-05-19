@@ -27,10 +27,6 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
 
     private ArrayList<Track> tracks;
     private ArrayList<Ball> balls;
-//    //player stuff yk yk
-//    private int playerX = 100, playerY = 100;
-//    private int playerSpeed = 5;
-//    private ArrayList<Rectangle> enemies = new ArrayList<Rectangle>();
 
     public MainGameContainer() {
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
@@ -45,8 +41,6 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
         tracks.add(left);
         tracks.add(right);
 
-        //TODO: add random generation function
-        //TODO: add random speed function
         Ball b1 = new Ball(10, (int) defaultConfig[6].x, (int) defaultConfig[6].y, 5, 0);
         initBallVelocity(b1);
         balls.add(b1);
@@ -55,7 +49,9 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
     }
 
     private void initBallVelocity(Ball b) {
-        double angle = (Math.random() * 90 - 45) + 0.01; //generate random angle from -45 45
+        double angleRange = 45;
+        double angle = (180 - Math.random() * angleRange*2 - angleRange) + 0.01; //generate random angle from -45 45
+        System.out.println(angle);
         double dx = baseVelocity * Math.cos(angle);
         double dy = baseVelocity * Math.sin(angle);
         b.setVelocity(dx, dy);
@@ -64,17 +60,6 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
     private void initTrack() {
 
     }
-
-//    private void initializeEnemies() {
-//        Random rand = new Random();
-//        for (int i = 0; i < 10; i++) {
-//            enemies.add(new Rectangle(
-//                    rand.nextInt(WIDTH - 50),
-//                    rand.nextInt(HEIGHT - 50),
-//                    30, 30
-//            ));
-//        }
-//    }
 
     public void startGame() {
         if (running) return;
@@ -130,27 +115,28 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
         //default config for now
         //in our coordinate system going down is positive 1 and going up is negative 1...
         if (keys[KeyEvent.VK_A]) { //-1
-            tracks.get(0).setDir(-1);
+            tracks.get(0).getPlayer().setDir(-1);
             tracks.get(0).update();
         }
         if (keys[KeyEvent.VK_D]) { //1
-            tracks.get(0).setDir(1);
+            tracks.get(0).getPlayer().setDir(1);
             tracks.get(0).update();
         }
         if (keys[KeyEvent.VK_J]) {
-            tracks.get(1).setDir(-1);
+            tracks.get(1).getPlayer().setDir(-1);
             tracks.get(1).update();
         }
         if (keys[KeyEvent.VK_L]) {
-            tracks.get(1).setDir(1);
+            tracks.get(1).getPlayer().setDir(1);
             tracks.get(1).update();
         }
 
         for (Ball ball : balls) {
             ball.update();
+         //   System.out.println(ball.center_x + " " + ball.center_y );
             for (Track t : tracks) {
-                if (ball.intersects(t)) {
-                    ball.setNewVelocity(t);
+                if (ball.intersects(t.getPlayer())) {
+                    ball.setNewVelocity(t.getPlayer());
                 }
             }
 
