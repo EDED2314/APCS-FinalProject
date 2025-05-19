@@ -40,21 +40,24 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
         Track right = new Track(defaultConfig[3], defaultConfig[4], defaultConfig[5], 90, 0, 5);
         tracks.add(left);
         tracks.add(right);
+        Track top = new Track(defaultConfig[0], defaultConfig[3]);
+        Track bottom = new Track(defaultConfig[1], defaultConfig[4]);
+        tracks.add(top);
+        tracks.add(bottom);
 
         Ball b1 = new Ball(10, (int) defaultConfig[6].x, (int) defaultConfig[6].y, 5, 0);
         initBallVelocity(b1);
         balls.add(b1);
 
-
     }
 
     private void initBallVelocity(Ball b) {
         double angleRange = 45;
-        double angle = (180 - Math.random() * angleRange*2 - angleRange) + 0.01; //generate random angle from -45 45
-        System.out.println(angle);
+        double angle = (180 - Math.random() * angleRange * 2 - angleRange) + 0.01; //generate random angle from -45 45
         double dx = baseVelocity * Math.cos(angle);
         double dy = baseVelocity * Math.sin(angle);
         b.setVelocity(dx, dy);
+        b.setVelocity(1, -3);
     }
 
     private void initTrack() {
@@ -133,10 +136,32 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
 
         for (Ball ball : balls) {
             ball.update();
-         //   System.out.println(ball.center_x + " " + ball.center_y );
+            //   System.out.println(ball.center_x + " " + ball.center_y );
             for (Track t : tracks) {
-                if (ball.intersects(t.getPlayer())) {
-                    ball.setNewVelocity(t.getPlayer());
+                if (t.getPlayer() != null) {
+                    if (ball.intersects(t.getPlayer())) {
+                        System.out.println("hellooooo");
+                        ball.setNewVelocity(t.getPlayer());
+                    }
+                } else {
+                    //System.out.println(t);
+                    //find distance to line from point
+                    //basically cross product formula but in this case cross prod is det of matrix made of all comps
+
+                    // |Point1Q x v| / |v|
+                    // | [ [center_x-x,center_y], [x1-x2, y1-y2]] | / |v| ->
+                    double[] trackLineVector = new double[]{(t.getBounds()[0].x - t.getBounds()[1].x), (t.getBounds()[0].y - t.getBounds()[1].y)};
+                    double cross = (ball.center_x) * trackLineVector[1] - (ball.center_y) * trackLineVector[0];
+                    double magTrackLine = Math.sqrt(trackLineVector[0] * trackLineVector[0] + trackLineVector[1] * trackLineVector[1]);
+                    double distance = Math.abs(cross / magTrackLine);
+                    System.out.println(distance);
+                    if (distance < 10) {
+                        double magVelocity = Math.sqrt(ball.dx * ball.dx + ball.dy * ball.dy);
+                        double dot = trackLineVector[0] * ball.dx + trackLineVector[1] * ball.dy;
+                        double angleRad = dot / (magTrackLine * magVelocity);
+                        double[] newVelocityVector = new double[]{-magVelocity * Math.cos(angleRad), magVelocity * Math.sin(angleRad)};
+                        ball.setVelocity(newVelocityVector[0], newVelocityVector[1]);
+                    }
                 }
             }
 
@@ -155,8 +180,8 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
         render(g);
 
         //debug
-//        g.setColor(Color.WHITE);
-//        g.drawString("Player Position: " + playerX + ", " + playerY, 10, 20);
+        g.setColor(Color.RED);
+        g.drawString("Player Position: " + balls.get(0).center_x + ", " + balls.get(0).center_y, 10, 20);
     }
 
     private void render(Graphics g) {

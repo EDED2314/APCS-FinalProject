@@ -15,13 +15,25 @@ public class Track {
         p = new Player(center.x, center.y, angle / 57.3, dx, dy);
     }
 
+    Track(CustomPoint bound1, CustomPoint bound2){
+        p1 = bound1;
+        p2 = bound2;
+        p = null;
+    }
+
+
     public Player getPlayer() {
         return p;
+    }
+
+    public CustomPoint[] getBounds(){
+        return new CustomPoint[] {p1, p2};
     }
 
 
     //track update logic
     public void update() {
+        if (p == null) return;
         double dis1 = p1.distance(new CustomPoint(p.center_x, p.center_y));
         double dis2 = p2.distance(new CustomPoint(p.center_x, p.center_y));
         if (dis1 < boundaryMinDistance) {
@@ -46,7 +58,7 @@ public class Track {
 
     //track render logic
     public void render(Graphics2D g2d) {
-        p.render(g2d);
+        if (p != null) p.render(g2d);
 
         g2d.setColor(Color.WHITE);
         g2d.setStroke(new BasicStroke(3));
@@ -55,5 +67,8 @@ public class Track {
         g2d.setColor(Color.BLACK);
     }
 
+    public String toString(){
+        return p1 + " " + p2;
+    }
 
 }

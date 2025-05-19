@@ -11,8 +11,6 @@ public class Player extends CustomRectangle {
         super(centerX, centerY, width, height, angle, dx, dy);
     }
 
-
-
     public void update(){
         double cos = Math.cos(super.angle);
         double sin = Math.sin(super.angle);

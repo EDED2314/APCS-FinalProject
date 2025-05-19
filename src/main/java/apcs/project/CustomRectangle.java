@@ -60,6 +60,7 @@ public class CustomRectangle {
 
         // Check for separation on all axes
         // SAT algo says if there is a separating axis then there is NO intersection. Vice versa
+
         return !(hasSeparatingAxis(corners, otherCorners)) ||
                 !(hasSeparatingAxis(otherCorners, corners));
 
@@ -163,5 +164,7 @@ public class CustomRectangle {
     public CustomPoint[] getCorners() {
         return corners;
     }
+
+
 
 }
