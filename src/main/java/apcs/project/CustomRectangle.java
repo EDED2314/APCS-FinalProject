@@ -10,7 +10,7 @@ public class CustomRectangle {
     public double width;
     public double height;
 
-    private CustomPoint[] edgePoints;
+    private CustomPoint[] corners;
 
     private double angle; //radians
 
@@ -27,7 +27,7 @@ public class CustomRectangle {
         CustomPoint p3 = rotatePoint(new CustomPoint(rightX(), bottomY()));
         CustomPoint p4 = rotatePoint(new CustomPoint(leftX(), bottomY()));
 
-        edgePoints = new CustomPoint[] {p1,p2,p3,p4};
+        corners = new CustomPoint[] {p1,p2,p3,p4};
     }
 
     private double leftX() {
@@ -46,11 +46,64 @@ public class CustomRectangle {
         return center_y + height / 2;
     }
 
-    // SAT algorithm
+    // SAT algorithm -> works only for convex polys :( but its ok because our game is only convex B-)
+    // we need to find a seperating axis, which is basically using dot prod to project everything, finding max and min of those project
+    // then using that to see if they overlap, if they do then proceed to next one
     //https://www.youtube.com/watch?app=desktop&v=-EsWKT7Doww
     public boolean intersects(CustomRectangle other) {
+        CustomPoint[] otherCorners = other.getCorners();
+
+        // Check for separation on all axes
+        // SAT algo says if there is a separating axis then there is NO intersection. Vice versa
+        return !(hasSeparatingAxis(corners, otherCorners)) ||
+                !(hasSeparatingAxis(otherCorners, corners));
+
+    }
+
+    //find seperating axis for any two polys
+    //pre cond is corners of A and B same length and = 4 cuz rect
+    public boolean hasSeparatingAxis(CustomPoint[] cornersA, CustomPoint[] cornersB){
+        for (int i = 0; i<4; i++){
+            //checking all sides
+            // first we calculate a normal for that side
+            int next = (i + 1) % 4;
+            double[] vectorP1 = new double[]{cornersA[next].x, cornersA[next].y};
+            double[] vectorP2 =  new double[]{cornersA[i].x, cornersA[i].y};
+
+            double[] vectorDiff = new double[] {vectorP1[0] - vectorP2[0], vectorP1[1]-vectorP2[1]};
+            double[] normal = new double[] {-vectorDiff[1], vectorDiff[0]};
+
+            // normalizing it so it's not out of control
+            double mag = Math.sqrt(normal[0]* normal[0] + normal[1]*normal[1]);
+            normal[0] /= mag;
+            normal[0] /= mag;
+
+            double[] aProjections = projectPoints(cornersA, normal);
+            double[] bProjections = projectPoints(cornersB, normal);
+
+            // Check for overlap
+            if (aProjections[1] < bProjections[0] || bProjections[1] < aProjections[0]) {
+                return true; // Separating axis found
+            }
+
+        }
         return false;
     }
+
+    private double[] projectPoints(CustomPoint[] points, double[] normal) {
+        double min = Double.POSITIVE_INFINITY;
+        double max = Double.NEGATIVE_INFINITY;
+
+        for (CustomPoint p : points) {
+            //projecting w dot product points dot normal
+            double projection = p.x * normal[0] + p.y * normal[1];
+            min = Math.min(min, projection);
+            max = Math.max(max, projection);
+        }
+
+        return new double[]{min, max};
+    }
+
 
 
     private CustomPoint rotatePoint(CustomPoint p) {
@@ -87,6 +140,10 @@ public class CustomRectangle {
 
         g2d.setTransform(oldTransform);
 
+    }
+
+    public CustomPoint[] getCorners(){
+        return corners;
     }
 
 }
