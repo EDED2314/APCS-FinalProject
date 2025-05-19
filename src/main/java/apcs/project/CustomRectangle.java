@@ -7,19 +7,23 @@ import java.awt.geom.AffineTransform;
 public class CustomRectangle {
     public double center_x;
     public double center_y;
-    public double width;
-    public double height;
 
+    private double dx;
+    private double dy;
+
+    private double width;
+    private double height;
     private CustomPoint[] corners;
-
     private double angle; //radians
 
-    public CustomRectangle(double center_x, double center_y, double width, double height, double angle) {
+    public CustomRectangle(double center_x, double center_y, double width, double height, double angle, double dx, double dy) {
         this.center_x = center_x;
         this.center_y = center_y;
         this.width = width;
         this.height = height;
         this.angle = angle;
+        this.dx = dx;
+        this.dy = dy;
 
         //clockwise assignment for each of the edge points
         CustomPoint p1 = rotatePoint(new CustomPoint(leftX(), topY()));
@@ -117,6 +121,10 @@ public class CustomRectangle {
         return new CustomPoint(rotated_X + center_x, rotated_Y + center_y);
     }
 
+    public void update(){
+
+    }
+
     public void render(Graphics2D g2d) {
         // Much easier render method w/o using polygons yay
 
@@ -136,6 +144,7 @@ public class CustomRectangle {
         );
 
         g2d.setTransform(oldTransform);
+
     }
 
     public CustomPoint[] getCorners() {

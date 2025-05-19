@@ -8,7 +8,7 @@ public class ZZZDEPRECATEDGameComponent extends JComponent
 {
     public void paintComponent(Graphics g)
     {
-        Graphics2D g2 = (Graphics2D) g;
+        Graphics2D g2 = (Graphics2D) g.create();
 
 //        Ball b = new Ball(20);
 //        b.render(g2);

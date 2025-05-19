@@ -11,7 +11,4 @@ public class CustomPoint {
         this.y = y;
     }
 
-    public Point getPoint() {
-        return new Point((int) x, (int) y);
-    }
 }
