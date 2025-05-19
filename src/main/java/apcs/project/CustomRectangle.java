@@ -10,10 +10,7 @@ public class CustomRectangle {
     public double width;
     public double height;
 
-    private CustomPoint p1;
-    private CustomPoint p2;
-    private CustomPoint p3;
-    private CustomPoint p4;
+    private CustomPoint[] edgePoints;
 
     private double angle; //radians
 
@@ -25,34 +22,34 @@ public class CustomRectangle {
         this.angle = angle;
 
         //clockwise assignment for each of the edge points
-        p1 = rotatePoint(new CustomPoint(leftX(), topY()));
-        p2 = rotatePoint(new CustomPoint(rightX(), topY()));
-        p3 = rotatePoint(new CustomPoint(rightX(), bottomY()));
-        p4 = rotatePoint(new CustomPoint(leftX(), bottomY()));
+        CustomPoint p1 = rotatePoint(new CustomPoint(leftX(), topY()));
+        CustomPoint p2 = rotatePoint(new CustomPoint(rightX(), topY()));
+        CustomPoint p3 = rotatePoint(new CustomPoint(rightX(), bottomY()));
+        CustomPoint p4 = rotatePoint(new CustomPoint(leftX(), bottomY()));
+
+        edgePoints = new CustomPoint[] {p1,p2,p3,p4};
     }
 
-    public double leftX() {
+    private double leftX() {
         return center_x - width / 2;
     }
 
-    public double rightX() {
+    private double rightX() {
         return center_x + width / 2;
     }
 
-    public double topY() {
+    private double topY() {
         return center_y - height / 2;
     }
 
-    public double bottomY() {
+    private double bottomY() {
         return center_y + height / 2;
     }
 
-    //TODO - rework intersect function because this is only working for 90, 0, 270 and 360 cases
+    // SAT algorithm
+    //https://www.youtube.com/watch?app=desktop&v=-EsWKT7Doww
     public boolean intersects(CustomRectangle other) {
-        return leftX() < other.rightX() &&
-                rightX() > other.leftX() &&
-                topY() < other.bottomY() &&
-                bottomY() > other.topY();
+        return false;
     }
 
 
