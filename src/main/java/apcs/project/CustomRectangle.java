@@ -27,7 +27,7 @@ public class CustomRectangle {
         CustomPoint p3 = rotatePoint(new CustomPoint(rightX(), bottomY()));
         CustomPoint p4 = rotatePoint(new CustomPoint(leftX(), bottomY()));
 
-        corners = new CustomPoint[] {p1,p2,p3,p4};
+        corners = new CustomPoint[]{p1, p2, p3, p4};
     }
 
     private double leftX() {
@@ -62,19 +62,19 @@ public class CustomRectangle {
 
     //find seperating axis for any two polys
     //pre cond is corners of A and B same length and = 4 cuz rect
-    public boolean hasSeparatingAxis(CustomPoint[] cornersA, CustomPoint[] cornersB){
-        for (int i = 0; i<4; i++){
+    public boolean hasSeparatingAxis(CustomPoint[] cornersA, CustomPoint[] cornersB) {
+        for (int i = 0; i < 4; i++) {
             //checking all sides
             // first we calculate a normal for that side
             int next = (i + 1) % 4;
             double[] vectorP1 = new double[]{cornersA[next].x, cornersA[next].y};
-            double[] vectorP2 =  new double[]{cornersA[i].x, cornersA[i].y};
+            double[] vectorP2 = new double[]{cornersA[i].x, cornersA[i].y};
 
-            double[] vectorDiff = new double[] {vectorP1[0] - vectorP2[0], vectorP1[1]-vectorP2[1]};
-            double[] normal = new double[] {-vectorDiff[1], vectorDiff[0]};
+            double[] vectorDiff = new double[]{vectorP1[0] - vectorP2[0], vectorP1[1] - vectorP2[1]};
+            double[] normal = new double[]{-vectorDiff[1], vectorDiff[0]};
 
             // normalizing it so it's not out of control
-            double mag = Math.sqrt(normal[0]* normal[0] + normal[1]*normal[1]);
+            double mag = Math.sqrt(normal[0] * normal[0] + normal[1] * normal[1]);
             normal[0] /= mag;
             normal[0] /= mag;
 
@@ -105,7 +105,6 @@ public class CustomRectangle {
     }
 
 
-
     private CustomPoint rotatePoint(CustomPoint p) {
         double relX = p.x - center_x;
         double relY = p.y - center_y;
@@ -118,10 +117,8 @@ public class CustomRectangle {
         return new CustomPoint(rotated_X + center_x, rotated_Y + center_y);
     }
 
-    public void render(Graphics g) {
-
+    public void render(Graphics2D g2d) {
         // Much easier render method w/o using polygons yay
-        Graphics2D g2d = (Graphics2D) g.create();
 
         AffineTransform oldTransform = g2d.getTransform();
 
@@ -139,10 +136,9 @@ public class CustomRectangle {
         );
 
         g2d.setTransform(oldTransform);
-
     }
 
-    public CustomPoint[] getCorners(){
+    public CustomPoint[] getCorners() {
         return corners;
     }
 

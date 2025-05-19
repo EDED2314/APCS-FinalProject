@@ -11,6 +11,6 @@ public class GameComponent extends JComponent
         Graphics2D g2 = (Graphics2D) g;
 
         Ball b = new Ball(20);
-        b.draw(g2);
+        b.render(g2);
     }
 }

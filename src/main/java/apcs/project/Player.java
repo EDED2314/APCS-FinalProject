@@ -5,7 +5,7 @@ import java.awt.geom.*;
 
 
 public class Player {
-    private double playerX;
+
 
 
     public void render(Graphics g) {

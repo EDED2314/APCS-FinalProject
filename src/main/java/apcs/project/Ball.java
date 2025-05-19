@@ -1,31 +1,30 @@
 package apcs.project;
 
 import java.awt.*;
-import java.awt.Rectangle;
 
-//Should be a square ball cuz easier collision detection
 public class Ball {
     private int size;
-    private int center_x;
-    private int center_y;
+    public double center_x;
+    public double center_y;
+
+    private CustomRectangle ball;
 
     Ball(int s) {
         size = s;
         center_x = 0;
         center_y = 0;
+        ball = new CustomRectangle(0, 0 , size, size, 0);
     }
 
     Ball(int s, int center_x, int center_y) {
         size = s;
         this.center_x = center_x;
         this.center_y = center_y;
+        ball = new CustomRectangle(center_x, center_y, size, size, 0);
     }
 
-    public void draw(Graphics2D g2) {
-
-        Rectangle rect = new Rectangle(center_x - size/ 2, center_y - size / 2, size, size);
-        g2.draw(rect);
-
+    public void render(Graphics2D g2d) {
+        ball.render(g2d);
     }
 
 }
