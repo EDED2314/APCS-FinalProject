@@ -57,7 +57,7 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
         double dx = baseVelocity * Math.cos(angle);
         double dy = baseVelocity * Math.sin(angle);
         b.setVelocity(dx, dy);
-        b.setVelocity(1, -3);
+        b.setVelocity(1, -2);
     }
 
     private void initTrack() {
@@ -149,16 +149,20 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
                     //basically cross product formula but in this case cross prod is det of matrix made of all comps
 
                     // |Point1Q x v| / |v|
-                    // | [ [center_x-x,center_y], [x1-x2, y1-y2]] | / |v| ->
+                    // | [ [x1-center_x,y1-center_y], [x1-x2, y1-y2]] | / |v| ->
                     double[] trackLineVector = new double[]{(t.getBounds()[0].x - t.getBounds()[1].x), (t.getBounds()[0].y - t.getBounds()[1].y)};
-                    double cross = (ball.center_x) * trackLineVector[1] - (ball.center_y) * trackLineVector[0];
+                    double cross = (t.getBounds()[0].x-ball.center_x) * trackLineVector[1] - (t.getBounds()[0].y-ball.center_y) * trackLineVector[0];
                     double magTrackLine = Math.sqrt(trackLineVector[0] * trackLineVector[0] + trackLineVector[1] * trackLineVector[1]);
                     double distance = Math.abs(cross / magTrackLine);
-                    System.out.println(distance);
-                    if (distance < 10) {
+                    //System.out.println(distance);
+                    if (distance < 5) {
                         double magVelocity = Math.sqrt(ball.dx * ball.dx + ball.dy * ball.dy);
-                        double dot = trackLineVector[0] * ball.dx + trackLineVector[1] * ball.dy;
+                        double dot = trackLineVector[0] * ball.dx + trackLineVector[1] * -1 * ball.dy;
+                       // System.out.println(dot);
                         double angleRad = dot / (magTrackLine * magVelocity);
+                        System.out.println(angleRad * 57.3);
+                        System.out.println( Math.cos(angleRad));
+                        System.out.println( Math.sin(angleRad));
                         double[] newVelocityVector = new double[]{-magVelocity * Math.cos(angleRad), magVelocity * Math.sin(angleRad)};
                         ball.setVelocity(newVelocityVector[0], newVelocityVector[1]);
                     }
