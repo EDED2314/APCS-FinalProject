@@ -61,8 +61,8 @@ public class CustomRectangle {
         // Check for separation on all axes
         // SAT algo says if there is a separating axis then there is NO intersection. Vice versa
 
-        return !(hasSeparatingAxis(corners, otherCorners)) ||
-                !(hasSeparatingAxis(otherCorners, corners));
+        return !hasSeparatingAxis(corners, otherCorners) &&
+                !hasSeparatingAxis(otherCorners, corners);
 
     }
 
@@ -82,7 +82,7 @@ public class CustomRectangle {
             // normalizing it so it's not out of control
             double mag = Math.sqrt(normal[0] * normal[0] + normal[1] * normal[1]);
             normal[0] /= mag;
-            normal[0] /= mag;
+            normal[1] /= mag;
 
             double[] aProjections = projectPoints(cornersA, normal);
             double[] bProjections = projectPoints(cornersB, normal);
@@ -135,6 +135,18 @@ public class CustomRectangle {
     public void update() {
         center_x += dx * dir;
         center_y += dy * dir;
+        updateCorners();
+    }
+
+    public void updateCorners() {
+        CustomPoint p1 = rotatePoint(new CustomPoint(leftX(), topY()));
+        CustomPoint p2 = rotatePoint(new CustomPoint(rightX(), topY()));
+        CustomPoint p3 = rotatePoint(new CustomPoint(rightX(), bottomY()));
+        CustomPoint p4 = rotatePoint(new CustomPoint(leftX(), bottomY()));
+        corners[0] = p1;
+        corners[1] = p2;
+        corners[2] = p3;
+        corners[3] = p4;
     }
 
     public void render(Graphics2D g2d) {
@@ -164,7 +176,6 @@ public class CustomRectangle {
     public CustomPoint[] getCorners() {
         return corners;
     }
-
 
 
 }

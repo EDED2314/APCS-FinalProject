@@ -19,8 +19,6 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
             new CustomPoint(790, 300),
             new CustomPoint(400, 300)};
 
-    private static final double baseVelocity = 5;
-
     private Thread gameThread;
     private volatile boolean running = false;
     private boolean[] keys = new boolean[256];
@@ -52,12 +50,11 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
     }
 
     private void initBallVelocity(Ball b) {
-        double angleRange = 45;
-        double angle = (180 - Math.random() * angleRange * 2 - angleRange) + 0.01; //generate random angle from -45 45
-        double dx = baseVelocity * Math.cos(angle);
-        double dy = baseVelocity * Math.sin(angle);
+        double angle = (180 - Math.random() * (Ball.MAX_BOUNCE_ANGLE-0.2) * 2 -(Ball.MAX_BOUNCE_ANGLE-0.2) ) + 0.01; //generate random angle from -45 45
+        double dx = Ball.BALL_SPEED * Math.cos(angle);
+        double dy = Ball.BALL_SPEED * Math.sin(angle);
         b.setVelocity(dx, dy);
-        b.setVelocity(1, -2);
+        b.setVelocity(-3, 0);
     }
 
     private void initTrack() {
@@ -140,8 +137,7 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
             for (Track t : tracks) {
                 if (t.getPlayer() != null) {
                     if (ball.intersects(t.getPlayer())) {
-                        System.out.println("hellooooo");
-                        ball.setNewVelocity(t.getPlayer());
+                        ball.setReboundVelocity(t.getPlayer());
                     }
                 } else {
                     //System.out.println(t);
@@ -151,7 +147,7 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
                     // |Point1Q x v| / |v|
                     // | [ [x1-center_x,y1-center_y], [x1-x2, y1-y2]] | / |v| ->
                     double[] trackLineVector = new double[]{(t.getBounds()[0].x - t.getBounds()[1].x), (t.getBounds()[0].y - t.getBounds()[1].y)};
-                    double cross = (t.getBounds()[0].x-ball.center_x) * trackLineVector[1] - (t.getBounds()[0].y-ball.center_y) * trackLineVector[0];
+                    double cross = (t.getBounds()[0].x - ball.center_x) * trackLineVector[1] - (t.getBounds()[0].y - ball.center_y) * trackLineVector[0];
                     double magTrackLine = Math.sqrt(trackLineVector[0] * trackLineVector[0] + trackLineVector[1] * trackLineVector[1]);
                     double distance = Math.abs(cross / magTrackLine);
                     //System.out.println(distance);
@@ -185,7 +181,7 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
 
         //debug
         g.setColor(Color.RED);
-        g.drawString("Player Position: " + balls.get(0).center_x + ", " + balls.get(0).center_y, 10, 20);
+        g.drawString("Ball Position: " + balls.get(0).center_x + ", " + balls.get(0).center_y, 10, 20);
     }
 
     private void render(Graphics g) {
@@ -250,6 +246,6 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
         double normalX = -dy;
         double normalY = dx;
         double length = Math.sqrt(normalX * normalX + normalY * normalY);
-        return new double[]{normalX/length, normalY/length};
+        return new double[]{normalX / length, normalY / length};
     }
 }
