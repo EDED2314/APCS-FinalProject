@@ -3,8 +3,8 @@ package apcs.project;
 import java.awt.*;
 
 public class Player extends CustomRectangle {
-    static int width = 10;
-    static int height = 30;
+    static int width = 30;
+    static int height = 10;
 
     Player(double centerX, double centerY, double angle, double dx, double dy) {
         super(centerX, centerY, width, height, angle, dx, dy);

@@ -34,8 +34,9 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
         setFocusable(true);
         addKeyListener(this);
 
-        Track left = new Track(defaultConfig[0], defaultConfig[1], defaultConfig[2], 0,0, 5 );
-        Track right = new Track(defaultConfig[3], defaultConfig[4], defaultConfig[5], 0,0, 5 );
+        Track left = new Track(defaultConfig[0], defaultConfig[1], defaultConfig[2], 90,0, 5 );
+        Track right = new Track(defaultConfig[3], defaultConfig[4], defaultConfig[5], 90,0, 5 );
+        tracks = new ArrayList<Track>();
         tracks.add(left);
         tracks.add(right);
 
@@ -43,6 +44,7 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
         //TODO: add random speed function
         Ball b1 = new Ball(10, 410, 300, 5, 0);
         b1.setVelocity(5,0);
+        balls = new ArrayList<Ball>();
         balls.add(b1);
 
 
@@ -119,11 +121,11 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
         if (keys[KeyEvent.VK_L]) tracks.get(1).update(1);
 
         //TODO: calculate new traj for ball... hmm using velocity vectors?
-        for (Ball ball: balls){
-            //TODO: calculate new vel vector then set it
-
-            ball.update(1);
-        }
+//        for (Ball ball: balls){
+//            //TODO: calculate new vel vector then set it
+//
+//            ball.update(1);
+//        }
 
         //TODO: collsion detection
 
@@ -152,6 +154,10 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
     }
 
     private void render(Graphics g) {
+        Graphics2D g2d = (Graphics2D) g.create();
+        for (Track  t : tracks){
+            t.render(g2d);
+        }
 //        g.setColor(Color.BLUE);
 //        g.fillRect(playerX, playerY, 50, 50);
 //
