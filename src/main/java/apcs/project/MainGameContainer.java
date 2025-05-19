@@ -156,15 +156,15 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
                     double distance = Math.abs(cross / magTrackLine);
                     //System.out.println(distance);
                     if (distance < 5) {
-                        double magVelocity = Math.sqrt(ball.dx * ball.dx + ball.dy * ball.dy);
-                        double dot = trackLineVector[0] * ball.dx + trackLineVector[1] * -1 * ball.dy;
-                       // System.out.println(dot);
-                        double angleRad = dot / (magTrackLine * magVelocity);
-                        System.out.println(angleRad * 57.3);
-                        System.out.println( Math.cos(angleRad));
-                        System.out.println( Math.sin(angleRad));
-                        double[] newVelocityVector = new double[]{-magVelocity * Math.cos(angleRad), magVelocity * Math.sin(angleRad)};
-                        ball.setVelocity(newVelocityVector[0], newVelocityVector[1]);
+                        // Get the wall's normal vector
+                        double[] normal = getWallNormal(t);
+
+                        // Calculate reflection using: V' = V - 2*(V·N)*N
+                        double dotProduct = ball.dx * normal[0] + ball.dy * normal[1];
+                        double newDx = ball.dx - 2 * dotProduct * normal[0];
+                        double newDy = ball.dy - 2 * dotProduct * normal[1];
+
+                        ball.setVelocity(newDx, newDy);
                     }
                 }
             }
@@ -227,5 +227,29 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
         frame.setVisible(true);
 
         game.startGame();
+    }
+
+    private double[] getWallNormal(Track t) {
+        CustomPoint p1 = t.getBounds()[0];
+        CustomPoint p2 = t.getBounds()[1];
+
+        // Horizontal walls (top/bottom)
+        if (Math.abs(p1.y - p2.y) < 1e-6) {
+            // Bottom wall normals point up, top point down
+            return new double[]{0, p1.y == 10 ? 1 : -1};
+        }
+        // Vertical walls (left/right)
+        else if (Math.abs(p1.x - p2.x) < 1e-6) {
+            // Right wall normals point left, left wall right
+            return new double[]{p1.x == 10 ? 1 : -1, 0};
+        }
+
+        // For diagonal walls (not in your current setup)
+        double dx = p2.x - p1.x;
+        double dy = p2.y - p1.y;
+        double normalX = -dy;
+        double normalY = dx;
+        double length = Math.sqrt(normalX * normalX + normalY * normalY);
+        return new double[]{normalX/length, normalY/length};
     }
 }
