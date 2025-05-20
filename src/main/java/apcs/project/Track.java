@@ -71,4 +71,28 @@ public class Track {
         return p1 + " " + p2;
     }
 
+    public double[] getWallNormal() {
+        CustomPoint p1 = this.getBounds()[0];
+        CustomPoint p2 = this.getBounds()[1];
+
+        // Horizontal walls (top/bottom)
+        if (Math.abs(p1.y - p2.y) < 1e-6) {
+            // Bottom wall normals point up, top point down
+            return new double[]{0, p1.y == 10 ? 1 : -1};
+        }
+        // Vertical walls (left/right)
+        else if (Math.abs(p1.x - p2.x) < 1e-6) {
+            // Right wall normals point left, left wall right
+            return new double[]{p1.x == 10 ? 1 : -1, 0};
+        }
+
+        // For diagonal walls (not in your current setup)
+        double dx = p2.x - p1.x;
+        double dy = p2.y - p1.y;
+        double normalX = -dy;
+        double normalY = dx;
+        double length = Math.sqrt(normalX * normalX + normalY * normalY);
+        return new double[]{normalX / length, normalY / length};
+    }
+
 }

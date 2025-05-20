@@ -50,7 +50,7 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
     }
 
     private void initBallVelocity(Ball b) {
-        double angle = (180 - Math.random() * (Ball.MAX_BOUNCE_ANGLE-0.2) * 2 -(Ball.MAX_BOUNCE_ANGLE-0.2) ) + 0.01; //generate random angle from -45 45
+        double angle = (180 - Math.random() * (Ball.MAX_BOUNCE_ANGLE - 0.2) * 2 - (Ball.MAX_BOUNCE_ANGLE - 0.2)) + 0.01; //generate random angle from -45 45
         double dx = Ball.BALL_SPEED * Math.cos(angle);
         double dy = Ball.BALL_SPEED * Math.sin(angle);
         b.setVelocity(dx, dy);
@@ -140,28 +140,11 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
                         ball.setReboundVelocity(t.getPlayer());
                     }
                 } else {
-                    //System.out.println(t);
-                    //find distance to line from point
-                    //basically cross product formula but in this case cross prod is det of matrix made of all comps
-
-                    // |Point1Q x v| / |v|
-                    // | [ [x1-center_x,y1-center_y], [x1-x2, y1-y2]] | / |v| ->
-                    double[] trackLineVector = new double[]{(t.getBounds()[0].x - t.getBounds()[1].x), (t.getBounds()[0].y - t.getBounds()[1].y)};
-                    double cross = (t.getBounds()[0].x - ball.center_x) * trackLineVector[1] - (t.getBounds()[0].y - ball.center_y) * trackLineVector[0];
-                    double magTrackLine = Math.sqrt(trackLineVector[0] * trackLineVector[0] + trackLineVector[1] * trackLineVector[1]);
-                    double distance = Math.abs(cross / magTrackLine);
-                    //System.out.println(distance);
-                    if (distance < 5) {
-                        // Get the wall's normal vector
-                        double[] normal = getWallNormal(t);
-
-                        // Calculate reflection using: V' = V - 2*(V·N)*N
-                        double dotProduct = ball.dx * normal[0] + ball.dy * normal[1];
-                        double newDx = ball.dx - 2 * dotProduct * normal[0];
-                        double newDy = ball.dy - 2 * dotProduct * normal[1];
-
-                        ball.setVelocity(newDx, newDy);
+                    double dis = ball.getBallToTrackDistance(t);
+                    if (dis < 5) {
+                        ball.setWallReboundVelocity(t);
                     }
+
                 }
             }
 
@@ -225,27 +208,5 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
         game.startGame();
     }
 
-    private double[] getWallNormal(Track t) {
-        CustomPoint p1 = t.getBounds()[0];
-        CustomPoint p2 = t.getBounds()[1];
 
-        // Horizontal walls (top/bottom)
-        if (Math.abs(p1.y - p2.y) < 1e-6) {
-            // Bottom wall normals point up, top point down
-            return new double[]{0, p1.y == 10 ? 1 : -1};
-        }
-        // Vertical walls (left/right)
-        else if (Math.abs(p1.x - p2.x) < 1e-6) {
-            // Right wall normals point left, left wall right
-            return new double[]{p1.x == 10 ? 1 : -1, 0};
-        }
-
-        // For diagonal walls (not in your current setup)
-        double dx = p2.x - p1.x;
-        double dy = p2.y - p1.y;
-        double normalX = -dy;
-        double normalY = dx;
-        double length = Math.sqrt(normalX * normalX + normalY * normalY);
-        return new double[]{normalX / length, normalY / length};
-    }
 }
