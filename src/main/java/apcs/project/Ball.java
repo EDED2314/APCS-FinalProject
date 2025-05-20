@@ -25,7 +25,6 @@ public class Ball extends CustomRectangle {
     }
 
     public void setWallReboundVelocity(Track t) {
-
         // Get the wall's normal vector
         double[] normal = t.getWallNormal();
 
@@ -38,7 +37,7 @@ public class Ball extends CustomRectangle {
 
     }
 
-    public void setReboundVelocity(Player player) {
+    public void setPaddleReboundVelocity(Player player) {
 
         double[] playerToBallVector = new double[]{this.center_x - player.center_x, this.center_y - player.center_y};
         double[] tangentVector = new double[]{Math.cos(player.angle), Math.sin(player.angle)};
@@ -47,15 +46,17 @@ public class Ball extends CustomRectangle {
 
         //use dot product to project playerToBall vector onto tangent vector of to get distance from center B>
         double impactPosition = (playerToBallVector[0] * tangentVector[0] + playerToBallVector[1] * tangentVector[1]);
-        System.out.println(impactPosition);
-        double normalizedImpactPosition = impactPosition / ((double) Player.height / 2);
+        double normalizedImpactPosition = impactPosition / ((double) Player.width / 2);
         double constrainedImpactPosition = Math.max(-1, Math.min(1, normalizedImpactPosition)); //-1 <= pos <= 1
+        System.out.println(constrainedImpactPosition);
+//
+//        double bounceAngle = constrainedImpactPosition * Ball.MAX_BOUNCE_ANGLE;
+//        double magVel = Math.hypot(this.dx, this.dy);
+//        double ballVx = magVel * Math.cos(bounceAngle);
+//        double ballVy = magVel * Math.sin(bounceAngle);
 
-        double bounceAngle = constrainedImpactPosition * Ball.MAX_BOUNCE_ANGLE;
-
-        double magVel = Math.hypot(this.dx, this.dy);
-        double ballVx = magVel * Math.cos(bounceAngle);
-        double ballVy = magVel * Math.sin(bounceAngle);
+        double ballVx = this.dx;
+        double ballVy = this.dy;
 
         //orientation flipping magic that I found online
         // dot product btwn normal and velcoity gives us how much it is moving towards the surface

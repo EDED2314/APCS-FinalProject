@@ -35,7 +35,7 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
         tracks = new ArrayList<Track>();
 
         Track left = new Track(defaultConfig[0], defaultConfig[1], defaultConfig[2], 90, 0, 5);
-        Track right = new Track(defaultConfig[3], defaultConfig[4], defaultConfig[5], 90, 0, 5);
+        Track right = new Track(defaultConfig[3], defaultConfig[4], defaultConfig[5], 270, 0, -5);
         tracks.add(left);
         tracks.add(right);
         Track top = new Track(defaultConfig[0], defaultConfig[3]);
@@ -50,7 +50,7 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
     }
 
     private void initBallVelocity(Ball b) {
-        double angle = (180 - Math.random() * (Ball.MAX_BOUNCE_ANGLE - 0.2) * 2 - (Ball.MAX_BOUNCE_ANGLE - 0.2)) + 0.01; //generate random angle from -45 45
+        double angle = ( Math.random() * (Ball.MAX_BOUNCE_ANGLE) * 2 - (Ball.MAX_BOUNCE_ANGLE)) + 0.01; //generate random angle from -45 45
         double dx = Ball.BALL_SPEED * Math.cos(angle);
         double dy = Ball.BALL_SPEED * Math.sin(angle);
         b.setVelocity(dx, dy);
@@ -114,19 +114,19 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
     private void update() {
         //default config for now
         //in our coordinate system going down is positive 1 and going up is negative 1...
-        if (keys[KeyEvent.VK_A]) { //-1
+        if (keys[KeyEvent.VK_W]) { //-1
             tracks.get(0).getPlayer().setDir(-1);
             tracks.get(0).update();
         }
-        if (keys[KeyEvent.VK_D]) { //1
+        if (keys[KeyEvent.VK_S]) { //1
             tracks.get(0).getPlayer().setDir(1);
             tracks.get(0).update();
         }
-        if (keys[KeyEvent.VK_J]) {
+        if (keys[KeyEvent.VK_I]) {
             tracks.get(1).getPlayer().setDir(-1);
             tracks.get(1).update();
         }
-        if (keys[KeyEvent.VK_L]) {
+        if (keys[KeyEvent.VK_K]) {
             tracks.get(1).getPlayer().setDir(1);
             tracks.get(1).update();
         }
@@ -137,7 +137,7 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
             for (Track t : tracks) {
                 if (t.getPlayer() != null) {
                     if (ball.intersects(t.getPlayer())) {
-                        ball.setReboundVelocity(t.getPlayer());
+                        ball.setPaddleReboundVelocity(t.getPlayer());
                     }
                 } else {
                     double dis = ball.getBallToTrackDistance(t);
