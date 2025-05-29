@@ -3,17 +3,18 @@ package apcs.project;
 import java.awt.*;
 
 public class Ball extends CustomRectangle {
-    static final int BALL_SPEED = 2;
+    static final int BALL_SPEED = 3;
     static final double MAX_BOUNCE_ANGLE = 1.308996939; //75 deg
+    static int ballsInited = 1;
 
-    //case when there are any amount players
-    Ball(int size, double vX, double vY) {
-        super(0, 0, size, size, 0, vX, vY);
-    }
+    public int id;
+    public int lastHitPaddleId;
 
-    //idk what this is for but ok
-    Ball(int size, int center_x, int center_y, double vX, double vY) {
-        super(center_x, center_y, size, size, 0, vX, vY);
+
+    Ball(int size, int center_x, int center_y) {
+        super(center_x, center_y, size, size, 0, 1, 1);
+        id = ballsInited;
+        ballsInited++;
     }
 
     public void update() {
@@ -24,11 +25,14 @@ public class Ball extends CustomRectangle {
         super.render(g2d);
     }
 
+    public void assignNewLastHit(int paddleId){
+        lastHitPaddleId = paddleId;
+    }
+
     public void setWallReboundVelocity(Track t) {
-        // Get the wall's normal vector
         double[] normal = t.getWallNormal();
 
-        // Calculate reflection using: V' = V - 2*(V·N)*N
+        // Calculate reflection using: V' = V - 2*(V·N)*N (thing from online)
         double dotProduct = this.dx * normal[0] + this.dy * normal[1];
         double newDx = this.dx - 2 * dotProduct * normal[0];
         double newDy = this.dy - 2 * dotProduct * normal[1];
@@ -39,21 +43,15 @@ public class Ball extends CustomRectangle {
 
     public void setPaddleReboundVelocity(Player player) {
 
-        double[] playerToBallVector = new double[]{this.center_x - player.center_x, this.center_y - player.center_y};
-        double[] tangentVector = new double[]{Math.cos(player.angle), Math.sin(player.angle)};
-        //double[] tangentVector = new double[] {-normal[1], normal[0]};
-        double[] normal = new double[]{-tangentVector[1], tangentVector[0]};
+        double[] playerToBallVector = {this.center_x - player.center_x, this.center_y - player.center_y};
+        double[] tangentVector = {Math.cos(player.angle), Math.sin(player.angle)};
+        //double[] tangentVector =  {-normal[1], normal[0]};
+        double[] normal = {-tangentVector[1], tangentVector[0]};
 
         //use dot product to project playerToBall vector onto tangent vector of to get distance from center B>
         double impactPosition = (playerToBallVector[0] * tangentVector[0] + playerToBallVector[1] * tangentVector[1]);
         double normalizedImpactPosition = impactPosition / ((double) Player.width / 2);
         double constrainedImpactPosition = Math.max(-1, Math.min(1, normalizedImpactPosition)); //-1 <= pos <= 1
-        System.out.println(constrainedImpactPosition);
-//
-//        double bounceAngle = constrainedImpactPosition * Ball.MAX_BOUNCE_ANGLE;
-//        double magVel = Math.hypot(this.dx, this.dy);
-//        double ballVx = magVel * Math.cos(bounceAngle);
-//        double ballVy = magVel * Math.sin(bounceAngle);
 
         double ballVx = this.dx;
         double ballVy = this.dy;
@@ -73,7 +71,6 @@ public class Ball extends CustomRectangle {
     }
 
 
-
     public double getBallToTrackDistance(Track t) {
         //System.out.println(t);
         //find distance to line from point
@@ -83,11 +80,19 @@ public class Ball extends CustomRectangle {
         // | [ [x1-center_x,y1-center_y], [x1-x2, y1-y2]] | / |v| ->
 
         //System.out.println(distance);
-        double[] trackLineVector = new double[]{(t.getBounds()[0].x - t.getBounds()[1].x), (t.getBounds()[0].y - t.getBounds()[1].y)};
+        double[] trackLineVector = {(t.getBounds()[0].x - t.getBounds()[1].x), (t.getBounds()[0].y - t.getBounds()[1].y)};
         double cross = (t.getBounds()[0].x - this.center_x) * trackLineVector[1] - (t.getBounds()[0].y - this.center_y) * trackLineVector[0];
         double magTrackLine = Math.sqrt(trackLineVector[0] * trackLineVector[0] + trackLineVector[1] * trackLineVector[1]);
         double distance = Math.abs(cross / magTrackLine);
         return distance;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public boolean equals(Ball other) {
+        return other.getId() == this.getId();
     }
 
 }

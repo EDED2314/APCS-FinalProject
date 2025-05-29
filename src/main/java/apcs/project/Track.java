@@ -3,22 +3,31 @@ package apcs.project;
 import java.awt.*;
 
 public class Track {
-    static double boundaryMinDistance = 10;
+    static final double boundaryMinDistance = 10;
+    static int tracksInited = 1;
+
+
     final private CustomPoint p1; //start point
     final private CustomPoint p2; //end point (boundary)
     private Player p;
+
+    private int id;
 
     //angle is in degrees
     Track(CustomPoint bound1, CustomPoint bound2, CustomPoint center, double angle, double dx, double dy) {
         p1 = bound1;
         p2 = bound2;
         p = new Player(center.x, center.y, angle / 57.3, dx, dy);
+        this.id = tracksInited;
+        tracksInited++;
     }
 
     Track(CustomPoint bound1, CustomPoint bound2){
         p1 = bound1;
         p2 = bound2;
         p = null;
+        this.id = tracksInited;
+        tracksInited++;
     }
 
 
@@ -36,18 +45,25 @@ public class Track {
         if (p == null) return;
         double dis1 = p1.distance(new CustomPoint(p.center_x, p.center_y));
         double dis2 = p2.distance(new CustomPoint(p.center_x, p.center_y));
+        double[] p1p2 = {p2.x - p1.x, p2.y - p1.y}; //p1 to p2 vector
+        double[] p2p1  = {p1.x - p2.x, p1.y - p2.y}; //from p2 to p1 vector
+        double[] player = {p.dx * p.dir, p.dy * p.dir}; //player dirtection vector
+        double p1p2dotplayer = p1p2[0] * player[0] + p1p2[1] * player[1];
+        double p2p1dotplayer = p2p1[0] * player[0] + p2p1[1] * player[1];
+
         if (dis1 < boundaryMinDistance) {
-            if (p.dir == 1) {
-                p.update();
-            } else {
+            if ( p1p2dotplayer< 0 ){
                 System.out.println("Out of bounds");
+            }else{
+                p.update();
             }
         } else if (dis2 < boundaryMinDistance) {
-            if (p.dir == -1) {
-                p.update();
-            } else {
+            if (p2p1dotplayer < 0 ){
                 System.out.println("Out of bounds");
+            }else{
+                p.update();
             }
+
         } else {
             p.update();
         }
@@ -95,4 +111,11 @@ public class Track {
         return new double[]{normalX / length, normalY / length};
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public boolean equals(Track other){
+        return other.getId() == this.getId();
+    }
 }

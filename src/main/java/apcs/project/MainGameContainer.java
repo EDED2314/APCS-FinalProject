@@ -10,56 +10,21 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
     private static final int WIDTH = 800;
     private static final int HEIGHT = 600;
     private static final int TARGET_FPS = 60;
-    private static final CustomPoint[] defaultConfig = new CustomPoint[]{
-            new CustomPoint(10, 10),
-            new CustomPoint(10, 590),
-            new CustomPoint(10, 300),
-            new CustomPoint(790, 10),
-            new CustomPoint(790, 590),
-            new CustomPoint(790, 300),
-            new CustomPoint(400, 300)};
 
     private Thread gameThread;
     private volatile boolean running = false;
     private boolean[] keys = new boolean[256];
 
-    private ArrayList<Track> tracks;
-    private ArrayList<Ball> balls;
+
+    private Court game = new Court(HEIGHT / (int) 2.002, new CustomPoint(WIDTH / (double) 2, HEIGHT / (double) 2));
 
     public MainGameContainer() {
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
         setFocusable(true);
         addKeyListener(this);
 
-        balls = new ArrayList<Ball>();
-        tracks = new ArrayList<Track>();
-
-        Track left = new Track(defaultConfig[0], defaultConfig[1], defaultConfig[2], 90, 0, 5);
-        Track right = new Track(defaultConfig[3], defaultConfig[4], defaultConfig[5], 270, 0, -5);
-        tracks.add(left);
-        tracks.add(right);
-        Track top = new Track(defaultConfig[0], defaultConfig[3]);
-        Track bottom = new Track(defaultConfig[1], defaultConfig[4]);
-        tracks.add(top);
-        tracks.add(bottom);
-
-        Ball b1 = new Ball(10, (int) defaultConfig[6].x, (int) defaultConfig[6].y, 5, 0);
-        initBallVelocity(b1);
-        balls.add(b1);
-
     }
 
-    private void initBallVelocity(Ball b) {
-        double angle = ( Math.random() * (Ball.MAX_BOUNCE_ANGLE) * 2 - (Ball.MAX_BOUNCE_ANGLE)) + 0.01; //generate random angle from -45 45
-        double dx = Ball.BALL_SPEED * Math.cos(angle);
-        double dy = Ball.BALL_SPEED * Math.sin(angle);
-        b.setVelocity(dx, dy);
-        b.setVelocity(-3, 0);
-    }
-
-    private void initTrack() {
-
-    }
 
     public void startGame() {
         if (running) return;
@@ -112,45 +77,7 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
     }
 
     private void update() {
-        //default config for now
-        //in our coordinate system going down is positive 1 and going up is negative 1...
-        if (keys[KeyEvent.VK_W]) { //-1
-            tracks.get(0).getPlayer().setDir(-1);
-            tracks.get(0).update();
-        }
-        if (keys[KeyEvent.VK_S]) { //1
-            tracks.get(0).getPlayer().setDir(1);
-            tracks.get(0).update();
-        }
-        if (keys[KeyEvent.VK_I]) {
-            tracks.get(1).getPlayer().setDir(-1);
-            tracks.get(1).update();
-        }
-        if (keys[KeyEvent.VK_K]) {
-            tracks.get(1).getPlayer().setDir(1);
-            tracks.get(1).update();
-        }
-
-        for (Ball ball : balls) {
-            ball.update();
-            //   System.out.println(ball.center_x + " " + ball.center_y );
-            for (Track t : tracks) {
-                if (t.getPlayer() != null) {
-                    if (ball.intersects(t.getPlayer())) {
-                        ball.setPaddleReboundVelocity(t.getPlayer());
-                    }
-                } else {
-                    double dis = ball.getBallToTrackDistance(t);
-                    if (dis < 5) {
-                        ball.setWallReboundVelocity(t);
-                    }
-
-                }
-            }
-
-        }
-
-
+        game.update(keys);
     }
 
     @Override
@@ -164,17 +91,12 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
 
         //debug
         g.setColor(Color.RED);
-        g.drawString("Ball Position: " + balls.get(0).center_x + ", " + balls.get(0).center_y, 10, 20);
+        g.drawString("Ball Position: " + game.getBalls().get(0).center_x + ", " + game.getBalls().get(0).center_y, 10, 20);
     }
 
     private void render(Graphics g) {
         Graphics2D g2d = (Graphics2D) g.create();
-        for (Track t : tracks) {
-            t.render(g2d);
-        }
-        for (Ball b : balls) {
-            b.render(g2d);
-        }
+        game.render(g2d);
     }
 
     @Override
