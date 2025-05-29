@@ -14,8 +14,7 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
     private volatile boolean running = false;
     private boolean[] keys = new boolean[256];
 
-
-    private Court game = new Court(HEIGHT / (int) 2.002, new CustomPoint(WIDTH / (double) 2, HEIGHT / (double) 2), 10);
+    private Court game = new Court(HEIGHT / 2, new CustomPoint(WIDTH / (double) 2, HEIGHT / (double) 2), 10);
 
     public MainGameContainer() {
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
