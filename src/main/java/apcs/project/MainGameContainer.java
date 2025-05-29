@@ -3,7 +3,6 @@ package apcs.project;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.util.*;
 import javax.swing.*;
 
 public class MainGameContainer extends JPanel implements Runnable, KeyListener {
@@ -16,7 +15,7 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
     private boolean[] keys = new boolean[256];
 
 
-    private Court game = new Court(HEIGHT / (int) 2.002, new CustomPoint(WIDTH / (double) 2, HEIGHT / (double) 2));
+    private Court game = new Court(HEIGHT / (int) 2.002, new CustomPoint(WIDTH / (double) 2, HEIGHT / (double) 2), 10);
 
     public MainGameContainer() {
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
@@ -33,14 +32,14 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
         gameThread.start();
     }
 
-    public void stopGame() {
-        running = false;
-        try {
-            gameThread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
+//    public void stopGame() {
+//        running = false;
+//        try {
+//            gameThread.join();
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
 
     @Override
@@ -91,7 +90,7 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
 
         //debug
         g.setColor(Color.RED);
-        g.drawString("Ball Position: " + game.getBalls().get(0).center_x + ", " + game.getBalls().get(0).center_y, 10, 20);
+        g.drawString("Ball Position: " + game.getBalls().getFirst().center_x + ", " + game.getBalls().getFirst().center_y, 10, 20);
     }
 
     private void render(Graphics g) {

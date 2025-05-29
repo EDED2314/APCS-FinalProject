@@ -21,13 +21,13 @@ public class Court {
     private CustomPoint center;
 
 
-    public Court(int radius, CustomPoint center) {
+    public Court(int radius, CustomPoint center, int playerNum) {
         this.radius = radius;
         this.center = center;
 
         balls = new ArrayList<Ball>();
 
-        refreshTrackConfiguration(7);
+        refreshTrackConfiguration(playerNum);
 
         initBall();
     }
