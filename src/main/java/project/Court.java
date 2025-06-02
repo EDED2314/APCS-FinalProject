@@ -140,7 +140,7 @@ public class Court {
         }
 
         checkBallForPoint();
-        displayScores();
+ //       displayScores();
 
     }
 

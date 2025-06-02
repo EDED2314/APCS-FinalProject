@@ -19,11 +19,9 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
     private volatile boolean running = false;
     private boolean[] keys = new boolean[256];
 
-    private Court game = new Court(HEIGHT / 2, new CustomPoint(WIDTH / (double) 2, HEIGHT / (double) 2), 20);
+    private Court game = new Court(HEIGHT / 2, new CustomPoint(WIDTH / (double) 2, HEIGHT / (double) 2), 3);
     private GameClient socketClient;
     private GameServer socketServer;
-
-
 
     public MainGameContainer() {
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
@@ -38,6 +36,16 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
         running = true;
         gameThread = new Thread(this);
         gameThread.start();
+
+        if (JOptionPane.showConfirmDialog(this, "Do you want to run the server") == 0){
+            socketServer = new GameServer(game, "localhost");
+            socketServer.start();
+        }
+
+        socketClient = new GameClient(game, "localhost");
+        socketClient.start();
+
+        socketClient.sendData("ping".getBytes());
     }
 
 //    public void stopGame() {

@@ -22,7 +22,7 @@ public class Track {
         tracksInited++;
     }
 
-    Track(CustomPoint bound1, CustomPoint bound2){
+    Track(CustomPoint bound1, CustomPoint bound2) {
         p1 = bound1;
         p2 = bound2;
         p = null;
@@ -30,13 +30,21 @@ public class Track {
         tracksInited++;
     }
 
+    Track() {
+        p1 = new CustomPoint(0, 0);
+        p2 = new CustomPoint(0, 0);
+        p = null;
+        this.id = tracksInited;
+        tracksInited ++;
+    }
+
 
     public Player getPlayer() {
         return p;
     }
 
-    public CustomPoint[] getBounds(){
-        return new CustomPoint[] {p1, p2};
+    public CustomPoint[] getBounds() {
+        return new CustomPoint[]{p1, p2};
     }
 
 
@@ -46,21 +54,21 @@ public class Track {
         double dis1 = p1.distance(new CustomPoint(p.center_x, p.center_y));
         double dis2 = p2.distance(new CustomPoint(p.center_x, p.center_y));
         double[] p1p2 = {p2.x - p1.x, p2.y - p1.y}; //p1 to p2 vector
-        double[] p2p1  = {p1.x - p2.x, p1.y - p2.y}; //from p2 to p1 vector
+        double[] p2p1 = {p1.x - p2.x, p1.y - p2.y}; //from p2 to p1 vector
         double[] player = {p.dx * p.dir, p.dy * p.dir}; //player dirtection vector
         double p1p2dotplayer = p1p2[0] * player[0] + p1p2[1] * player[1];
         double p2p1dotplayer = p2p1[0] * player[0] + p2p1[1] * player[1];
 
         if (dis1 < boundaryMinDistance) {
-            if ( p1p2dotplayer< 0 ){
+            if (p1p2dotplayer < 0) {
                 System.out.println("Out of bounds");
-            }else{
+            } else {
                 p.update();
             }
         } else if (dis2 < boundaryMinDistance) {
-            if (p2p1dotplayer < 0 ){
+            if (p2p1dotplayer < 0) {
                 System.out.println("Out of bounds");
-            }else{
+            } else {
                 p.update();
             }
 
@@ -83,7 +91,7 @@ public class Track {
         g2d.setColor(Color.BLACK);
     }
 
-    public String toString(){
+    public String toString() {
         return p1 + " " + p2;
     }
 
@@ -115,7 +123,7 @@ public class Track {
         return id;
     }
 
-    public boolean equals(Track other){
+    public boolean equals(Track other) {
         return other.getId() == this.getId();
     }
 }
