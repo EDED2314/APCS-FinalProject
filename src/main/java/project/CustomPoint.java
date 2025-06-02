@@ -1,4 +1,4 @@
-package apcs.project;
+package project;
 
 public class CustomPoint {
     public double x;

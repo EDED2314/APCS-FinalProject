@@ -1,9 +1,14 @@
-package apcs.project;
+package project;
 
+
+import net.GameClient;
+import net.GameServer;
 
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+
+
 
 public class MainGameContainer extends JPanel implements Runnable, KeyListener {
     private static final int WIDTH = 800;
@@ -14,7 +19,11 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
     private volatile boolean running = false;
     private boolean[] keys = new boolean[256];
 
-    private Court game = new Court(HEIGHT / 2, new CustomPoint(WIDTH / (double) 2, HEIGHT / (double) 2), 10);
+    private Court game = new Court(HEIGHT / 2, new CustomPoint(WIDTH / (double) 2, HEIGHT / (double) 2), 20);
+    private GameClient socketClient;
+    private GameServer socketServer;
+
+
 
     public MainGameContainer() {
         setPreferredSize(new Dimension(WIDTH, HEIGHT));

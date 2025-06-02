@@ -1,4 +1,4 @@
-package apcs.project;
+package project;
 
 import java.awt.*;
 
