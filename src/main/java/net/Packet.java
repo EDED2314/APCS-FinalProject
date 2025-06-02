@@ -33,6 +33,14 @@ public abstract class Packet {
 
     public abstract  byte[] getData();
 
+    public static PacketTypes lookupPacket(String id) {
+        try{
+            return lookupPacket(Integer.parseInt(id));
+        } catch (NumberFormatException e) {
+            return PacketTypes.INVALID;
+        }
+    }
+
     public static PacketTypes lookupPacket(int id) {
         for (PacketTypes p : PacketTypes.values()) {
             //loop thru all packet types
@@ -50,7 +58,7 @@ class Packet00Login extends Packet {
 
     public Packet00Login(byte[] data) {
         super(00);
-        this.trackId = Integer.valueOf(readData(data));
+        this.trackId = Integer.parseInt(readData(data));
 
     }
 
@@ -72,5 +80,9 @@ class Packet00Login extends Packet {
     @Override
     public byte[] getData() {
         return ("00" + this.trackId).getBytes();
+    }
+
+    public int getTrackId(){
+        return trackId;
     }
 }

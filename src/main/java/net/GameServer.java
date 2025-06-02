@@ -1,16 +1,16 @@
 package net;
 
-import project.Court;
-import project.PlayerClient;
+import project.*;
 
 import java.io.IOException;
 import java.net.*;
 import java.util.ArrayList;
 
-public class GameServer extends  Thread{
+public class GameServer extends Thread {
     private DatagramSocket socket;
-    private Court game;
 
+    //THIS NOW MANAGES EVERYTHING SO WE GOTTA CHANGE STUFF!
+    private Court game;
     private ArrayList<PlayerClient> connectedPlayers = new ArrayList<PlayerClient>();
 
     public GameServer(Court game, String ip) {
@@ -33,11 +33,34 @@ public class GameServer extends  Thread{
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            String message = new String(packet.getData());
-            System.out.println("CLIENT [" + packet.getAddress().getHostAddress() + ":" + packet.getPort() + "] > " + message);
-            if (message.trim().equalsIgnoreCase("ping")) {
-                sendData("pong".getBytes(), packet.getAddress(), packet.getPort());
-            }
+            parsePacket(packet.getData(), packet.getAddress(), packet.getPort());
+
+
+//            String message = new String(packet.getData());
+//            System.out.println("CLIENT [" + packet.getAddress().getHostAddress() + ":" + packet.getPort() + "] > " + message);
+//            if (message.trim().equalsIgnoreCase("ping")) {
+//                sendData("pong".getBytes(), packet.getAddress(), packet.getPort());
+//            }
+        }
+    }
+
+    private void parsePacket(byte[] data, InetAddress address, int port) {
+        String message = new String(data).trim();
+        Packet.PacketTypes type = Packet.lookupPacket(message.substring(0, 2));
+        switch (type) {
+            case INVALID:
+                break;
+            case LOGIN:
+                Packet00Login packet = new Packet00Login(data);
+                System.out.println("[" + address.getHostAddress() + ":" + port + "] Track: " + packet.getTrackId() + " has connected.");
+                //create a track/player based off of the address and port
+                //PlayerClient player = new PlayerClient(address, port);
+                Track t = game.addTrack();
+                PlayerClient p = new PlayerClient(t, address, port);
+                connectedPlayers.add(p);
+
+            case DISCONNECT:
+                break;
         }
     }
 
@@ -51,7 +74,7 @@ public class GameServer extends  Thread{
     }
 
     public void sendDataToAllClients(byte[] data) {
-        for (PlayerClient connectedPlayer : connectedPlayers){
+        for (PlayerClient connectedPlayer : connectedPlayers) {
             sendData(data, connectedPlayer.ipaddress, connectedPlayer.port);
         }
     }

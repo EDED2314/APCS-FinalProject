@@ -9,11 +9,10 @@ import java.awt.event.*;
 import javax.swing.*;
 
 
-
 public class MainGameContainer extends JPanel implements Runnable, KeyListener {
-    private static final int WIDTH = 800;
-    private static final int HEIGHT = 600;
-    private static final int TARGET_FPS = 60;
+    public static final int WIDTH = 800;
+    public static final int HEIGHT = 600;
+    public static final int TARGET_FPS = 60;
 
     private Thread gameThread;
     private volatile boolean running = false;
@@ -37,7 +36,7 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
         gameThread = new Thread(this);
         gameThread.start();
 
-        if (JOptionPane.showConfirmDialog(this, "Do you want to run the server") == 0){
+        if (JOptionPane.showConfirmDialog(this, "Do you want to run the server") == 0) {
             socketServer = new GameServer(game, "localhost");
             socketServer.start();
         }

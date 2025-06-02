@@ -46,8 +46,14 @@ public class Court {
         b.setVelocity(dx, dy);
     }
 
+
+
     private void refreshTrackConfiguration(int playerNumber) {
         tracks = new ArrayList<Track>();
+        if (playerNumber == 1){
+            // only start generating tracks at 2
+            return;
+        }
         if (playerNumber == 2) {
             Track left = new Track(defaultConfig[0], defaultConfig[1], defaultConfig[2], 270, 0, 5);
             Track right = new Track(defaultConfig[3], defaultConfig[4], defaultConfig[5], 270, 0, 5);
@@ -216,6 +222,11 @@ public class Court {
 
     public void addBall(Ball e) {
         balls.add(e);
+    }
+
+    public Track addTrack(){
+        refreshTrackConfiguration(tracks.size() + 1);
+        return tracks.getLast();
     }
 
     public void addTrack(Track e) {
