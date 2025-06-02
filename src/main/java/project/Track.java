@@ -77,14 +77,21 @@ public class Track {
 
 
     //track render logic
-    public void render(Graphics2D g2d) {
-        if (p != null) p.render(g2d);
-
+    public void render(Graphics2D g2d, String id) {
         g2d.setColor(Color.WHITE);
         g2d.setStroke(new BasicStroke(3));
         g2d.drawLine((int) p1.x, (int) p1.y, (int) p2.x, (int) p2.y);
         g2d.setStroke(new BasicStroke());
         g2d.setColor(Color.BLACK);
+
+        if (p != null) {
+            if (this.id.equals(id)){
+                p.render(g2d, Color.GREEN);
+            }else{
+                p.render(g2d, Color.WHITE);
+            }
+
+        }
     }
 
     public String toString() {

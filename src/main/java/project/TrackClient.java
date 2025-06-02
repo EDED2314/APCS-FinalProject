@@ -50,7 +50,7 @@ public class TrackClient extends Track {
     }
 
 
-    public void render(Graphics2D g2d) {
-        super.render(g2d);
+    public void render(Graphics2D g2d, String id) {
+        super.render(g2d, id);
     }
 }

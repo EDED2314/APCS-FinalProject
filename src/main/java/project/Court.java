@@ -5,7 +5,6 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
 import packet.Packet;
-import packet.Packet00Login;
 
 public class Court {
     private static final CustomPoint[] defaultConfig = {
@@ -109,7 +108,7 @@ public class Court {
                 double adjustedAngle = 180 - interiorAngle;
                 double adjustedAngleRadians = adjustedAngle / 57.3;
                 for (int n = 0; n < playerNumber; n++) {
-                    getNewTrack(n, adjustedAngleRadians, tracks.get(n));
+                    refreshTrack(n, adjustedAngleRadians, tracks.get(n));
                 }
                 break;
 
@@ -145,14 +144,14 @@ public class Court {
                 //formula from above method
                 double adjustedAngleRadianss = (180 - ((180 * (tracks.size() - 2)) / (double) tracks.size())) / 57.3;
                 for (int n = 0; n < tracks.size(); n++) {
-                    getNewTrack(n, adjustedAngleRadianss, tracks.get(n));
+                    refreshTrack(n, adjustedAngleRadianss, tracks.get(n));
                 }
                 break;
         }
 
     }
 
-    private void getNewTrack(int n, double adjustedAngleRadians, TrackClient oldTrack) {
+    private void refreshTrack(int n, double adjustedAngleRadians, TrackClient oldTrack) {
         int x1 = (int) (radius * Math.cos(n * adjustedAngleRadians) + center.x);
         int y1 = (int) (radius * Math.sin(n * adjustedAngleRadians) + center.y);
         int x2 = (int) (radius * Math.cos((n + 1) * adjustedAngleRadians) + center.x);
@@ -248,10 +247,10 @@ public class Court {
 
     }
 
-    public void render(Graphics2D g2d) {
+    public void render(Graphics2D g2d, String id) {
         if (tracks.size() >= 2) {
             for (Track t : tracks) {
-                t.render(g2d);
+                t.render(g2d, id);
             }
         }
 

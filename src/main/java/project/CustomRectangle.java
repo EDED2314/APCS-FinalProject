@@ -149,7 +149,7 @@ public class CustomRectangle {
         corners[3] = p4;
     }
 
-    public void render(Graphics2D g2d) {
+    public void render(Graphics2D g2d, Color color) {
         // Much easier render method w/o using polygons yay
 
         AffineTransform oldTransform = g2d.getTransform();
@@ -160,7 +160,7 @@ public class CustomRectangle {
 
         g2d.rotate(angle, center_x, center_y);
 
-        g2d.setColor(Color.WHITE);
+        g2d.setColor(color);
         g2d.fillRect(
                 (int) (center_x - width / 2),
                 (int) (center_y - height / 2),

@@ -56,21 +56,16 @@ public class GameServer extends Thread {
                 Packet00Login packet = new Packet00Login(data);
                 System.out.println("[" + address.getHostAddress() + ":" + port + "] Track: " + packet.getTrackId() + " has connected.");
                 //create a track/player based off of the address and port
-                //TODO: modify this to accept the data's id
                 boolean fail = false;
                 for (TrackClient track : game.getTracks()) {
                     if (track.getId().equals(packet.getTrackId())) {
-                        //ping back the people and make then restart and rejoin cuz same id not good
+                        //TODO: ping back the people and make then restart and rejoin cuz same id not good
                         fail = true;
                     }
                 }
                 if (!fail) {
                     TrackClient t = new TrackClient(address, port, packet.getTrackId());
                     game.addTrack(t);
-
-//                TrackClient t = game.addTrack();
-//                t.ipaddress = address;
-//                t.port = port;
                 }
 
                 break;

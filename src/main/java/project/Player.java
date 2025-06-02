@@ -18,7 +18,7 @@ public class Player extends CustomRectangle {
     }
 
 
-    public void render(Graphics2D g2d) {
-        super.render(g2d);
+    public void render(Graphics2D g2d, Color color){
+        super.render(g2d, color);
     }
 }

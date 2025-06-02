@@ -22,7 +22,7 @@ public class Ball extends CustomRectangle {
     }
 
     public void render(Graphics2D g2d) {
-        super.render(g2d);
+        super.render(g2d, Color.WHITE);
     }
 
     public void assignNewLastHit(String paddleId){

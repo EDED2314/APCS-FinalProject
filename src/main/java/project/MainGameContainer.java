@@ -3,14 +3,19 @@ package project;
 
 import net.GameClient;
 import net.GameServer;
+
 import packet.Packet00Login;
 
 import java.awt.*;
 import java.awt.event.*;
+
 import javax.swing.*;
 
 
 public class MainGameContainer extends JPanel implements Runnable, KeyListener {
+
+    private String playerId;
+
     public static final int WIDTH = 800;
     public static final int HEIGHT = 600;
     public static final int TARGET_FPS = 60;
@@ -32,11 +37,6 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
 
 
     public void startGame() {
-        if (running) return;
-        running = true;
-        gameThread = new Thread(this);
-        gameThread.start();
-
         if (JOptionPane.showConfirmDialog(this, "Do you want to run the server") == 0) {
             socketServer = new GameServer(game, "localhost");
             socketServer.start();
@@ -46,10 +46,16 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
         socketClient.start();
 
 
-        //Packet00Login loginPacket = new Packet00Login(JOptionPane.showInputDialog(this, "Please enter a username"));
-        Packet00Login login = new Packet00Login(JOptionPane.showInputDialog(this, "Please enter a username"));
+        String id = JOptionPane.showInputDialog(this, "Please enter a username");
+        playerId = id;
+        Packet00Login login = new Packet00Login(id);
 
         //socketClient.sendData("ping".getBytes());
+
+        if (running) return;
+        running = true;
+        gameThread = new Thread(this);
+        gameThread.start();
     }
 
 //    public void stopGame() {
@@ -115,7 +121,7 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
 
     private void render(Graphics g) {
         Graphics2D g2d = (Graphics2D) g.create();
-        game.render(g2d);
+        game.render(g2d, playerId);
     }
 
     @Override
