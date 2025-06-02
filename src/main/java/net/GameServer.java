@@ -37,12 +37,12 @@ public class GameServer extends Thread {
             }
             parsePacket(packet.getData(), packet.getAddress(), packet.getPort());
 
-
-            String message = new String(packet.getData());
-            System.out.println("CLIENT [" + packet.getAddress().getHostAddress() + ":" + packet.getPort() + "] > " + message);
-            if (message.trim().equalsIgnoreCase("ping")) {
-                sendData("pong".getBytes(), packet.getAddress(), packet.getPort());
-            }
+//
+//            String message = new String(packet.getData());
+//            System.out.println("CLIENT [" + packet.getAddress().getHostAddress() + ":" + packet.getPort() + "] > " + message);
+//            if (message.trim().equalsIgnoreCase("ping")) {
+//                sendData("pong".getBytes(), packet.getAddress(), packet.getPort());
+//            }
         }
     }
 
