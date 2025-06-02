@@ -4,40 +4,30 @@ import java.awt.*;
 
 public class Track {
     static final double boundaryMinDistance = 10;
-    static int tracksInited = 1;
+    static int tracksInit = 0;
 
-
-    final private CustomPoint p1; //start point
-    final private CustomPoint p2; //end point (boundary)
+    private CustomPoint p1; //start point
+    private CustomPoint p2; //end point (boundary)
     private Player p;
 
-    private int id;
+    private final String id;
 
     //angle is in degrees
-    Track(CustomPoint bound1, CustomPoint bound2, CustomPoint center, double angle, double dx, double dy) {
+    Track(CustomPoint bound1, CustomPoint bound2, CustomPoint center, double angle, double dx, double dy, String id) {
         p1 = bound1;
         p2 = bound2;
         p = new Player(center.x, center.y, angle / 57.3, dx, dy);
-        this.id = tracksInited;
-        tracksInited++;
+        this.id = id;
+        tracksInit++;
     }
 
-    Track(CustomPoint bound1, CustomPoint bound2) {
+    Track(CustomPoint bound1, CustomPoint bound2, String id) {
         p1 = bound1;
         p2 = bound2;
         p = null;
-        this.id = tracksInited;
-        tracksInited++;
+        this.id = id;
+        tracksInit++;
     }
-
-    Track() {
-        p1 = new CustomPoint(0, 0);
-        p2 = new CustomPoint(0, 0);
-        p = null;
-        this.id = tracksInited;
-        tracksInited ++;
-    }
-
 
     public Player getPlayer() {
         return p;
@@ -47,6 +37,12 @@ public class Track {
         return new CustomPoint[]{p1, p2};
     }
 
+
+    public void refresh(CustomPoint bound1, CustomPoint bound2, CustomPoint center, double angle, double dx, double dy) {
+        p1 = bound1;
+        p2 = bound2;
+        p = new Player(center.x, center.y, angle / 57.3, dx, dy);
+    }
 
     //track update logic
     public void update() {
@@ -119,11 +115,11 @@ public class Track {
         return new double[]{normalX / length, normalY / length};
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public boolean equals(Track other) {
-        return other.getId() == this.getId();
+    public boolean equals(TrackClient other) {
+        return other.getId().equals(this.getId());
     }
 }

@@ -3,6 +3,7 @@ package project;
 
 import net.GameClient;
 import net.GameServer;
+import packet.Packet00Login;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -44,7 +45,11 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
         socketClient = new GameClient(game, "localhost");
         socketClient.start();
 
-        socketClient.sendData("ping".getBytes());
+
+        //Packet00Login loginPacket = new Packet00Login(JOptionPane.showInputDialog(this, "Please enter a username"));
+        Packet00Login login = new Packet00Login(JOptionPane.showInputDialog(this, "Please enter a username"));
+
+        //socketClient.sendData("ping".getBytes());
     }
 
 //    public void stopGame() {
@@ -105,7 +110,7 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
 
         //debug
         g.setColor(Color.RED);
-        g.drawString("Ball Position: " + game.getBalls().getFirst().center_x + ", " + game.getBalls().getFirst().center_y, 10, 20);
+        g.drawString("Ball Position: " + game.getBalls().get(0).center_x + ", " + game.getBalls().get(0).center_y, 10, 20);
     }
 
     private void render(Graphics g) {

@@ -8,7 +8,7 @@ public class Ball extends CustomRectangle {
     static int ballsInited = 1;
 
     public int id;
-    public int lastHitPaddleId;
+    public String lastHitPaddleId;
 
 
     Ball(int size, int center_x, int center_y) {
@@ -25,7 +25,7 @@ public class Ball extends CustomRectangle {
         super.render(g2d);
     }
 
-    public void assignNewLastHit(int paddleId){
+    public void assignNewLastHit(String paddleId){
         lastHitPaddleId = paddleId;
     }
 
@@ -43,15 +43,15 @@ public class Ball extends CustomRectangle {
 
     public void setPaddleReboundVelocity(Player player) {
 
-        double[] playerToBallVector = {this.center_x - player.center_x, this.center_y - player.center_y};
+       // double[] playerToBallVector = {this.center_x - player.center_x, this.center_y - player.center_y};
         double[] tangentVector = {Math.cos(player.angle), Math.sin(player.angle)};
         //double[] tangentVector =  {-normal[1], normal[0]};
         double[] normal = {-tangentVector[1], tangentVector[0]};
 
-        //use dot product to project playerToBall vector onto tangent vector of to get distance from center B>
-        double impactPosition = (playerToBallVector[0] * tangentVector[0] + playerToBallVector[1] * tangentVector[1]);
-        double normalizedImpactPosition = impactPosition / ((double) Player.width / 2);
-        double constrainedImpactPosition = Math.max(-1, Math.min(1, normalizedImpactPosition)); //-1 <= pos <= 1
+//        //use dot product to project playerToBall vector onto tangent vector of to get distance from center B>
+//        double impactPosition = (playerToBallVector[0] * tangentVector[0] + playerToBallVector[1] * tangentVector[1]);
+//        double normalizedImpactPosition = impactPosition / ((double) Player.width / 2);
+//        double constrainedImpactPosition = Math.max(-1, Math.min(1, normalizedImpactPosition)); //-1 <= pos <= 1
 
         double ballVx = this.dx;
         double ballVy = this.dy;

@@ -1,4 +1,7 @@
-package net;
+package packet;
+
+import net.GameClient;
+import net.GameServer;
 
 public abstract class Packet {
     public static enum PacketTypes {
@@ -52,37 +55,3 @@ public abstract class Packet {
     }
 }
 
-class Packet00Login extends Packet {
-
-    private int trackId;
-
-    public Packet00Login(byte[] data) {
-        super(00);
-        this.trackId = Integer.parseInt(readData(data));
-
-    }
-
-    public Packet00Login(int trackId) {
-        super(00);
-        this.trackId = trackId;
-    }
-
-    @Override
-    public void writeData(GameClient client) {
-        client.sendData(getData());
-    }
-
-    @Override
-    public void writeData(GameServer server) {
-        server.sendDataToAllClients(getData());
-    }
-
-    @Override
-    public byte[] getData() {
-        return ("00" + this.trackId).getBytes();
-    }
-
-    public int getTrackId(){
-        return trackId;
-    }
-}
