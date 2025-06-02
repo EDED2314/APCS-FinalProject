@@ -65,7 +65,7 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
         long wait;
         long targetTime = 1000 / TARGET_FPS;
 
-        // Game loop!!!! 😍😍😍😍
+        // Game loop!!!!
         while (running) {
             startTime = System.nanoTime();
 
