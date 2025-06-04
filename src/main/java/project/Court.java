@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 import packet.Packet;
 
-public class Court {
+public abstract class Court {
     private static final CustomPoint[] defaultConfig = {
             new CustomPoint(10, 10),
             new CustomPoint(10, 590),
@@ -205,68 +205,18 @@ public class Court {
         return t;
     }
 
-    public void update(boolean[] keys) {
-        int start = KeyEvent.VK_1;
+//    public void update(boolean[] keys, String trackId) {
+//
+//    }
+//
+//    public void render(Graphics2D g2d, String id) {
+//    }
 
-        for (Track t : tracks) {
-            if (keys[start]) {
-                t.getPlayer().setDir(-1);
-                t.update();
-            }
-            start++;
-            if (keys[start]) {
-                t.getPlayer().setDir(1);
-                t.update();
-            }
-            start++;
-        }
-
-        for (Ball ball : balls) {
-            ball.update();
-            //   System.out.println(ball.center_x + " " + ball.center_y );
-            for (Track t : tracks) {
-                if (t.getPlayer() != null) {
-                    if (ball.intersects(t.getPlayer())) {
-                        ball.setPaddleReboundVelocity(t.getPlayer());
-                        ball.assignNewLastHit(t.getId());
-                    }
-                } else {
-                    double dis = ball.getBallToTrackDistance(t);
-                    if (dis < 5) {
-                        ball.setWallReboundVelocity(t);
-                    }
-
-                }
-            }
-
-        }
-        if (tracks.size() >= 2) {
-            checkBallForPoint();
-        }
-        //       displayScores();
-
-    }
-
-    public void render(Graphics2D g2d, String id) {
-        if (tracks.size() >= 2) {
-            for (Track t : tracks) {
-                t.render(g2d, id);
-            }
-        }
-
-        for (Ball b : balls) {
-            b.render(g2d);
-        }
-    }
-
-    private void checkBallForPoint() {
+    public boolean checkBallForGamePoint() {
+        boolean changed = false;
         for (int i = 0; i < balls.size(); i++) {
             Ball b = balls.get(i);
             if (Math.hypot(b.center_x - center.x, b.center_y - center.y) > radius) {
-                //do logic here
-                // respawn ball and give point to the last player.
-                //display new score.
-                // need score board thing
                 if (b.lastHitPaddleId == null) {
                     Track closest = tracks.get(0);
                     double minDis = b.getBallToTrackDistance(tracks.get(0));
@@ -278,6 +228,7 @@ public class Court {
                         }
                         if (t.getId().equals(b.lastHitPaddleId)) {
                             t.getPlayer().score++;
+                            changed = true;
                         }
                     }
 
@@ -285,11 +236,13 @@ public class Court {
                     others.remove(closest);
                     for (Track ot : others) {
                         ot.getPlayer().score++;
+                        changed = true;
                     }
                 } else {
                     for (Track t : tracks) {
                         if (t.getId().equals(b.lastHitPaddleId)) {
                             t.getPlayer().score++;
+                            changed = true;
                         }
                     }
                 }
@@ -299,9 +252,12 @@ public class Court {
                 i--;
                 initBall();
 
+
+
+
             }
         }
-
+        return changed;
     }
 
     private void displayScores() {

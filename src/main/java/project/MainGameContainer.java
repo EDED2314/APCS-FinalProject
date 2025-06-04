@@ -24,7 +24,8 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
     private volatile boolean running = false;
     private boolean[] keys = new boolean[256];
 
-    private Court game = new Court(HEIGHT / 2, new CustomPoint(WIDTH / (double) 2, HEIGHT / (double) 2), 3);
+    private CourtClient gameClient = new CourtClient(HEIGHT / 2, new CustomPoint(WIDTH / (double) 2, HEIGHT / (double) 2), 0);
+    private CourtServer gameServer = new CourtServer(HEIGHT / 2, new CustomPoint(WIDTH / (double) 2, HEIGHT / (double) 2), 0);
     private GameClient socketClient;
     private GameServer socketServer;
 
@@ -38,19 +39,19 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
 
     public void startGame() {
         if (JOptionPane.showConfirmDialog(this, "Do you want to run the server") == 0) {
-            socketServer = new GameServer(game, "localhost");
+            socketServer = new GameServer(gameServer, "localhost");
             socketServer.start();
         }
 
-        socketClient = new GameClient(game, "localhost");
+        socketClient = new GameClient(gameClient, "localhost");
         socketClient.start();
 
 
         String id = JOptionPane.showInputDialog(this, "Please enter a username");
         playerId = id;
         Packet00Login login = new Packet00Login(id);
-
-        //socketClient.sendData("ping".getBytes());
+        //let the login packet handler class use the client to send its data via client to server
+        login.writeData(socketClient);
 
         if (running) return;
         running = true;
@@ -102,7 +103,13 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
     }
 
     private void update() {
-        game.update(keys);
+        int status = gameClient.update(keys, playerId);
+        if (status == 1){
+            //forward
+
+        }else if (status == -1){
+            //reverse
+        }
     }
 
     @Override
@@ -116,12 +123,12 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
 
         //debug
         g.setColor(Color.RED);
-        g.drawString("Ball Position: " + game.getBalls().get(0).center_x + ", " + game.getBalls().get(0).center_y, 10, 20);
+        g.drawString("Ball Position: " + gameClient.getBalls().get(0).center_x + ", " + gameClient.getBalls().get(0).center_y, 10, 20);
     }
 
     private void render(Graphics g) {
         Graphics2D g2d = (Graphics2D) g.create();
-        game.render(g2d, playerId);
+        gameClient.render(g2d, playerId);
     }
 
     @Override

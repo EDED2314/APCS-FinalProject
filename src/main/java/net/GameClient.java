@@ -1,6 +1,10 @@
 package net;
 
+import packet.Packet;
+import packet.Packet00Login;
 import project.Court;
+import project.CourtClient;
+import project.TrackClient;
 
 import java.io.IOException;
 import java.net.*;
@@ -8,10 +12,10 @@ import java.net.*;
 public class GameClient extends Thread {
     public InetAddress ipAddress;
     private DatagramSocket socket;
-    private Court game;
+    private final CourtClient gameClient;
 
-    public GameClient(Court game, String ipAddress) {
-        this.game = game;
+    public GameClient(CourtClient game, String ipAddress) {
+        this.gameClient = game;
         try {
             this.socket = new DatagramSocket();
             this.ipAddress = InetAddress.getByName(ipAddress);
@@ -33,6 +37,38 @@ public class GameClient extends Thread {
             }
             System.out.println("SERVER > " + new String(packet.getData()));
 
+            this.parsePacket(packet.getData(), packet.getAddress(), packet.getPort());
+
+        }
+    }
+
+    private void parsePacket(byte[] data, InetAddress address, int port) {
+        String message = new String(data).trim();
+        Packet.PacketTypes type = Packet.lookupPacket(message.substring(0, 2));
+        Packet packet = null;
+        switch (type) {
+            case INVALID:
+                break;
+            case LOGIN:
+                packet = new Packet00Login(data);
+                System.out.println("[" + address.getHostAddress() + ":" + port + "] Track: " + ((Packet00Login) packet).getTrackId() + " has joined the game.");
+                addTrack(address, port,(Packet00Login) packet);
+                break;
+            case DISCONNECT:
+                break;
+        }
+    }
+
+    private void addTrack(InetAddress address, int port, Packet00Login packet){
+        boolean fail = false;
+        for (TrackClient track : gameClient.getTracks()) {
+            if (track.getId().equals(packet.getTrackId())) {
+               throw new RuntimeException();
+            }
+        }
+        if (!fail) {
+            TrackClient t = new TrackClient(address, port, packet.getTrackId());
+            gameClient.addTrack(t);
         }
     }
 
