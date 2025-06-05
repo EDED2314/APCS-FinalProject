@@ -285,6 +285,10 @@ public abstract class Court {
         buildTrackMapper(tracks);
     }
 
+    public TrackClient getTrackClient(String id){
+        return tracks.get(trackMapper.get(id));
+    }
+
     public void removeBall(int index) {
         balls.remove(index);
     }

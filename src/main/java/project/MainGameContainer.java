@@ -5,6 +5,8 @@ import net.GameClient;
 import net.GameServer;
 
 import packet.Packet00Login;
+import packet.Packet12SinglePlayerUpdate;
+import packet.Serializer;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -93,14 +95,9 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
     }
 
     private void update() {
-        Constants.UpdateStatus status = gameClient.update(keys, playerId);
-        switch (status){
-            case FORWARDS:
-                //send update to server
-                break;
-            case BACKWARDS:
-                break;
-        }
+        gameClient.update(keys, playerId);
+        Packet12SinglePlayerUpdate update = new Packet12SinglePlayerUpdate(Serializer.serializeTrack(gameClient.getTrackClient(playerId)).getBytes());
+        socketClient.sendData(update.getData());
     }
 
     @Override

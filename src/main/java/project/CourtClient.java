@@ -20,17 +20,19 @@ public class CourtClient extends Court {
         }
     }
 
-    public Constants.UpdateStatus update(boolean[] keys, String trackId) {
-        for (TrackClient t : super.getTracks()) {
-            if (t.getId().equals(trackId)) {
-                if (keys[KeyEvent.VK_A]) {
-                    return Constants.UpdateStatus.BACKWARDS;
-                }
-                if (keys[KeyEvent.VK_D]) {
-                    return Constants.UpdateStatus.FORWARDS;
-                }
-            }
+    public void update(boolean[] keys, String trackId) {
+        TrackClient t = getTrackClient(trackId);
+        if (keys[KeyEvent.VK_A]) {
+            t.getPlayer().setDir(-1);
         }
-        return Constants.UpdateStatus.NONE;
+        if (keys[KeyEvent.VK_D]) {
+            t.getPlayer().setDir(1);
+        }
+    }
+
+    public void updateTrack(String trackId, int direction) {
+        TrackClient t = getTrackClient(trackId);
+        t.getPlayer().setDir(direction);
+        t.update();
     }
 }

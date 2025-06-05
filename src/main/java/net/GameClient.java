@@ -2,6 +2,8 @@ package net;
 
 import packet.Packet;
 import packet.Packet00Login;
+import packet.Packet12SinglePlayerUpdate;
+import packet.Serializer;
 import project.CourtClient;
 import project.TrackClient;
 
@@ -34,7 +36,7 @@ public class GameClient extends Thread {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            System.out.println("SERVER > " + new String(packet.getData()));
+            //System.out.println("SERVER > " + new String(packet.getData()));
 
             this.parsePacket(packet.getData(), packet.getAddress(), packet.getPort());
 
@@ -54,6 +56,14 @@ public class GameClient extends Thread {
                 addTrack(address, port, (Packet00Login) packet);
                 break;
             case DISCONNECT:
+                //TODO: implemnt delete tracks
+                break;
+            case SINGLE_PLAYER_UPDATE:
+                packet = new Packet12SinglePlayerUpdate(data);
+                String id = ((Packet12SinglePlayerUpdate) packet).getId();
+                System.out.println("[" + address.getHostAddress() + ":" + port + "] Track: " + id + " successfully relayed its player update to player ___");
+                clientCourt.updateTrack(id, ((Packet12SinglePlayerUpdate) packet).getDir());
+                //done!
                 break;
         }
     }
@@ -72,7 +82,7 @@ public class GameClient extends Thread {
     }
 
     public void sendData(byte[] data) {
-        DatagramPacket packet = new DatagramPacket(data, data.length, ipAddress, 1331);
+        DatagramPacket packet = new DatagramPacket(data, data.length, ipAddress, TrackClient.defaultPort);
         try {
             this.socket.send(packet);
         } catch (IOException e) {

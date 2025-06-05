@@ -1,6 +1,6 @@
 package project;
 
-public class CourtServer extends Court{
+public class CourtServer extends Court {
 
 
     public CourtServer(int radius, CustomPoint center, int playerNum) {
@@ -8,20 +8,14 @@ public class CourtServer extends Court{
     }
 
 
-
-    public void updateTrack(String trackId, int direction){
-        for (Track t : super.getTracks()){
-            if (t.getId().equals(trackId)){
-                t.getPlayer().setDir(direction);
-                t.update();
-            }
-        }
-        // Find track t, and then update it.
-        // later broad cast it.
+    public void updateTrack(String trackId, int direction) {
+        TrackClient t = getTrackClient(trackId);
+        t.getPlayer().setDir(direction);
+        t.update();
     }
 
 
-    public Constants.UpdateStatus updateBalls(){
+    public Constants.UpdateStatus updateBalls() {
         boolean updateClientsOnBallStatus = false;
         for (Ball ball : super.getBalls()) {
             ball.update();
@@ -50,11 +44,11 @@ public class CourtServer extends Court{
             updateClientsForPoints = checkBallForGamePoint();
         }
 
-        if (updateClientsForPoints && updateClientsOnBallStatus){
+        if (updateClientsForPoints && updateClientsOnBallStatus) {
             return Constants.UpdateStatus.BALLS_NEW_VELOCITY_AND_POINT;
-        }else if (updateClientsForPoints){
+        } else if (updateClientsForPoints) {
             return Constants.UpdateStatus.POINT;
-        }else if (updateClientsOnBallStatus){
+        } else if (updateClientsOnBallStatus) {
             return Constants.UpdateStatus.BALLS_NEW_VELOCITY;
         }
         return Constants.UpdateStatus.NONE;

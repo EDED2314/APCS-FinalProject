@@ -2,6 +2,8 @@ package net;
 
 import packet.Packet;
 import packet.Packet00Login;
+import packet.Packet12SinglePlayerUpdate;
+import packet.Serializer;
 import project.*;
 
 import project.Court;
@@ -13,7 +15,7 @@ import java.util.ArrayList;
 public class GameServer extends Thread {
     private DatagramSocket socket;
 
-    private CourtServer serverCourt;
+    private final CourtServer serverCourt;
 
     public GameServer(CourtServer server, String ip) {
         serverCourt = server;
@@ -58,7 +60,17 @@ public class GameServer extends Thread {
                 addTrack(address, port, (Packet00Login) packet);
                 break;
             case DISCONNECT:
+
                 break;
+            case SINGLE_PLAYER_UPDATE:
+                packet = new Packet12SinglePlayerUpdate(data);
+                String id  =((Packet12SinglePlayerUpdate) packet).getId();
+                System.out.println("[" + address.getHostAddress() + ":" + port + "] Track: " +id + " sent a move update to the server");
+                serverCourt.updateTrack(id, ((Packet12SinglePlayerUpdate) packet).getDir());
+                packet = new Packet12SinglePlayerUpdate(Serializer.serializeTrack(serverCourt.getTrackClient(id)).getBytes());
+                packet.writeData(this);
+                break;
+
         }
     }
 
@@ -72,6 +84,7 @@ public class GameServer extends Thread {
         TrackClient t = new TrackClient(address, port, packet.getTrackId());
         serverCourt.addTrack(t);
         //server should send the newly connected player its location etc
+        // packet.writeData(this); <-- another implementation that works
         sendDataToAllClients(packet.getData());
 
     }
