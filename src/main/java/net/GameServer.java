@@ -38,12 +38,6 @@ public class GameServer extends Thread {
                 throw new RuntimeException(e);
             }
             this.parsePacket(packet.getData(), packet.getAddress(), packet.getPort());
-
-//            String message = new String(packet.getData());
-//            System.out.println("CLIENT [" + packet.getAddress().getHostAddress() + ":" + packet.getPort() + "] > " + message);
-//            if (message.trim().equalsIgnoreCase("ping")) {
-//                sendData("pong".getBytes(), packet.getAddress(), packet.getPort());
-//            }
         }
     }
 
@@ -58,9 +52,10 @@ public class GameServer extends Thread {
                 packet = new Packet00Login(data);
                 System.out.println("[" + address.getHostAddress() + ":" + port + "] Track: " + ((Packet00Login) packet).getTrackId() + " has connected to the server.");
                 addTrack(address, port, (Packet00Login) packet);
+                //TODO: sync all tracks
+                // send init ball logic
                 break;
             case DISCONNECT:
-
                 break;
             case SINGLE_PLAYER_UPDATE:
                 packet = new Packet12SinglePlayerUpdate(data);

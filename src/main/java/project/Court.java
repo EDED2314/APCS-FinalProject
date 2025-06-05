@@ -23,8 +23,8 @@ public abstract class Court {
     private Map<String, Integer> trackMapper = new HashMap<>();;
     private ArrayList<Ball> balls;
 
-    private int radius;
-    private CustomPoint center;
+    private final int radius;
+    private final CustomPoint center;
 
 
     public Court(int radius, CustomPoint center, int playerNum) {
@@ -35,8 +35,6 @@ public abstract class Court {
 
         refreshTrackConfiguration(playerNum);
         buildTrackMapper(tracks);
-
-        initBall();
     }
 
     private void buildTrackMapper(ArrayList<TrackClient> trackList) {
@@ -46,14 +44,7 @@ public abstract class Court {
         }
     }
 
-    private void initBall() {
-        Ball b1 = new Ball(10, (int) center.x, (int) center.y);
-        double angle = (Math.random() * (Ball.MAX_BOUNCE_ANGLE) * 2 - (Ball.MAX_BOUNCE_ANGLE)) + 0.01; //generate random angle from -45 45
-        double dx = Ball.BALL_SPEED * Math.cos(angle);
-        double dy = -1 * Ball.BALL_SPEED * Math.sin(angle); //negative because y is flipped in the coordinate system
-        b1.setVelocity(dx, dy);
-        balls.add(b1);
-    }
+
 
     private void refreshTrackConfiguration(int playerNumber) {
         tracks = new ArrayList<TrackClient>();
@@ -211,53 +202,6 @@ public abstract class Court {
         return t;
     }
 
-
-    public boolean checkBallForGamePoint() {
-        boolean changed = false;
-        for (int i = 0; i < balls.size(); i++) {
-            Ball b = balls.get(i);
-            if (Math.hypot(b.center_x - center.x, b.center_y - center.y) > radius) {
-                if (b.lastHitPaddleId == null) {
-                    Track closest = tracks.get(0);
-                    double minDis = b.getBallToTrackDistance(tracks.get(0));
-                    for (Track t : tracks) {
-                        double dis = b.getBallToTrackDistance(t);
-                        if (dis < minDis) {
-                            closest = t;
-                            minDis = dis;
-                        }
-                        if (t.getId().equals(b.lastHitPaddleId)) {
-                            t.getPlayer().score++;
-                            changed = true;
-                        }
-                    }
-
-                    ArrayList<Track> others = new ArrayList<Track>(tracks);
-                    others.remove(closest);
-                    for (Track ot : others) {
-                        ot.getPlayer().score++;
-                        changed = true;
-                    }
-                } else {
-                    for (Track t : tracks) {
-                        if (t.getId().equals(b.lastHitPaddleId)) {
-                            t.getPlayer().score++;
-                            changed = true;
-                        }
-                    }
-                }
-
-                //respawn ball
-                removeBall(i);
-                i--;
-                initBall();
-
-
-            }
-        }
-        return changed;
-    }
-
     private void displayScores() {
         System.out.println("Scores: ");
         for (Track t : tracks) {
@@ -287,6 +231,14 @@ public abstract class Court {
 
     public TrackClient getTrackClient(String id){
         return tracks.get(trackMapper.get(id));
+    }
+
+    public int getRadius(){
+        return radius;
+    }
+
+    public CustomPoint getCenter() {
+        return center;
     }
 
     public void removeBall(int index) {

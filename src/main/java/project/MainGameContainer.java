@@ -98,6 +98,7 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
         gameClient.update(keys, playerId);
         Packet12SinglePlayerUpdate update = new Packet12SinglePlayerUpdate(Serializer.serializeTrack(gameClient.getTrackClient(playerId)).getBytes());
         socketClient.sendData(update.getData());
+
     }
 
     @Override
