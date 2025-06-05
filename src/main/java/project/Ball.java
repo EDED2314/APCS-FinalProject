@@ -3,6 +3,7 @@ package project;
 import java.awt.*;
 
 public class Ball extends CustomRectangle {
+    static final int BALL_SIZE = 10;
     static final int BALL_SPEED = 3;
     static final double MAX_BOUNCE_ANGLE = 1.308996939; //75 deg
     static int ballsInited = 1;
@@ -11,8 +12,8 @@ public class Ball extends CustomRectangle {
     public String lastHitPaddleId;
 
 
-    Ball(int size, int center_x, int center_y) {
-        super(center_x, center_y, size, size, 0, 1, 1);
+    public Ball(double center_x, double center_y) {
+        super(center_x, center_y, BALL_SIZE, BALL_SIZE, 0, 1, 1);
         id = ballsInited;
         ballsInited++;
     }

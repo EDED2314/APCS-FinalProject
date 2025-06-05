@@ -10,7 +10,7 @@ public class Track {
     private CustomPoint p2; //end point (boundary)
     private Player p;
 
-    private final String id;
+    private String id;
 
     //angle is in degrees
     Track(CustomPoint bound1, CustomPoint bound2, CustomPoint center, double angle, double dx, double dy, String id) {
@@ -124,6 +124,10 @@ public class Track {
 
     public String getId() {
         return id;
+    }
+
+    public void setId(String id){
+        this.id = id;
     }
 
     public boolean equals(TrackClient other) {

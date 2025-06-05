@@ -32,9 +32,17 @@ public abstract class Court {
         this.center = center;
 
         balls = new ArrayList<Ball>();
+        tracks = refreshTrackConfiguration(playerNum);
 
-        refreshTrackConfiguration(playerNum);
         buildTrackMapper(tracks);
+    }
+
+    public void setBalls(ArrayList<Ball> balls){
+        this.balls = balls;
+    }
+
+    public void setTracks(ArrayList<TrackClient> tracks){
+        this.tracks = tracks;
     }
 
     private void buildTrackMapper(ArrayList<TrackClient> trackList) {
@@ -46,22 +54,22 @@ public abstract class Court {
 
 
 
-    private void refreshTrackConfiguration(int playerNumber) {
-        tracks = new ArrayList<TrackClient>();
+    public ArrayList<TrackClient> refreshTrackConfiguration(int playerNumber) {
+        ArrayList<TrackClient> localTracks = new ArrayList<TrackClient>();
         if (playerNumber == 1) {
             // only start generating tracks at 2
-            return;
+            return  new ArrayList<TrackClient>();
         }
         if (playerNumber == 2) {
             TrackClient left = new TrackClient(defaultConfig[0], defaultConfig[1], defaultConfig[2], 270, 0, 5, String.valueOf(Track.tracksInit));
             TrackClient right = new TrackClient(defaultConfig[3], defaultConfig[4], defaultConfig[5], 270, 0, 5, String.valueOf(Track.tracksInit));
-            tracks.add(left);
-            tracks.add(right);
+            localTracks.add(left);
+            localTracks.add(right);
             TrackClient top = new TrackClient(defaultConfig[0], defaultConfig[3], String.valueOf(Track.tracksInit));
             TrackClient bottom = new TrackClient(defaultConfig[1], defaultConfig[4], String.valueOf(Track.tracksInit));
-            tracks.add(top);
-            tracks.add(bottom);
-            return;
+            localTracks.add(top);
+            localTracks.add(bottom);
+            return localTracks;
         }
 
         double interiorAngle = ((180 * (playerNumber - 2)) / (double) playerNumber);
@@ -69,8 +77,9 @@ public abstract class Court {
         double adjustedAngleRadians = adjustedAngle / 57.3;
         for (int n = 0; n < playerNumber; n++) {
             TrackClient t = getNewTrack(n, adjustedAngleRadians);
-            tracks.add(t);
+            localTracks.add(t);
         }
+        return localTracks;
     }
 
     private void refreshTrackConfiguration(TrackClient targetTrack, Packet.PacketTypes type) {
@@ -198,8 +207,7 @@ public abstract class Court {
 
         //   System.out.println("This track's v: " + velx + "," + vely);
 
-        TrackClient t = new TrackClient(new CustomPoint(x1, y1), new CustomPoint(x2, y2), new CustomPoint(midx, midy), angle + Math.toRadians(90), velx, vely, String.valueOf(Track.tracksInit));
-        return t;
+        return new TrackClient(new CustomPoint(x1, y1), new CustomPoint(x2, y2), new CustomPoint(midx, midy), angle + Math.toRadians(90), velx, vely, String.valueOf(Track.tracksInit));
     }
 
     private void displayScores() {

@@ -11,6 +11,7 @@ public abstract class Packet {
         BALL_UPDATE(11),
         SINGLE_PLAYER_UPDATE(12),
         ALL_UPDATE(13),
+        SYNC(14),
         ;
 
         private final int packetId;

@@ -2,13 +2,17 @@ package net;
 
 import packet.Packet;
 import packet.Packet00Login;
+import packet.Packet11BallUpdate;
 import packet.Packet12SinglePlayerUpdate;
+import packet.Packet14Sync;
 import packet.Serializer;
+import project.Ball;
 import project.CourtClient;
 import project.TrackClient;
 
 import java.io.IOException;
 import java.net.*;
+import java.util.ArrayList;
 
 public class GameClient extends Thread {
     public InetAddress ipAddress;
@@ -65,7 +69,35 @@ public class GameClient extends Thread {
                 clientCourt.updateTrack(id, ((Packet12SinglePlayerUpdate) packet).getDir());
                 //done!
                 break;
+            case SYNC:
+                packet = new Packet14Sync(data);
+                sync((Packet14Sync) packet);
         }
+    }
+
+    private void sync(Packet14Sync packet) {
+        ArrayList<Packet11BallUpdate> balls = packet.getBallUpdates();
+        ArrayList<Packet12SinglePlayerUpdate> players = packet.getPlayerUpdates();
+        ArrayList<Ball> trueBalls = new ArrayList<Ball>();
+        for (Packet11BallUpdate ballUpdate : balls) {
+            Ball b = new Ball(ballUpdate.getX(), ballUpdate.getY());
+            b.setVelocity(ballUpdate.getVx(), ballUpdate.getVy());
+            trueBalls.add(b);
+        }
+        ArrayList<TrackClient> trueTracks = clientCourt.refreshTrackConfiguration(players.size());
+        for (int i = 0; i < players.size(); i++) {
+            //in this case we hop that the true tracks should be the same order as the plauer update
+            TrackClient t = trueTracks.get(i);
+            Packet12SinglePlayerUpdate playerUpdate = players.get(i);
+            t.setId(playerUpdate.getId());
+            t.getPlayer().setDir(playerUpdate.getDir());
+            t.getPlayer().setScore(playerUpdate.getScore());
+            t.getPlayer().setCenter_x(playerUpdate.getX());
+            t.getPlayer().setCenter_y(playerUpdate.getY());
+        }
+
+        clientCourt.setBalls(trueBalls);
+        clientCourt.setTracks(trueTracks);
     }
 
     private void addTrack(InetAddress address, int port, Packet00Login packet) {

@@ -123,31 +123,6 @@ public class CustomRectangle {
         return new CustomPoint(rotated_X + center_x, rotated_Y + center_y);
     }
 
-    public void setDir(int dir) {
-        this.dir = dir;
-    }
-
-    public void setVelocity(double dx, double dy) {
-        this.dx = dx;
-        this.dy = dy;
-    }
-
-    public void update() {
-        center_x += dx * dir;
-        center_y += dy * dir;
-        updateCorners();
-    }
-
-    public void updateCorners() {
-        CustomPoint p1 = rotatePoint(new CustomPoint(leftX(), topY()));
-        CustomPoint p2 = rotatePoint(new CustomPoint(rightX(), topY()));
-        CustomPoint p3 = rotatePoint(new CustomPoint(rightX(), bottomY()));
-        CustomPoint p4 = rotatePoint(new CustomPoint(leftX(), bottomY()));
-        corners[0] = p1;
-        corners[1] = p2;
-        corners[2] = p3;
-        corners[3] = p4;
-    }
 
     public void render(Graphics2D g2d, Color color) {
         // Much easier render method w/o using polygons yay
@@ -173,8 +148,43 @@ public class CustomRectangle {
 
     }
 
+    public void update() {
+        center_x += dx * dir;
+        center_y += dy * dir;
+        updateCorners();
+    }
+
+    public void updateCorners() {
+        CustomPoint p1 = rotatePoint(new CustomPoint(leftX(), topY()));
+        CustomPoint p2 = rotatePoint(new CustomPoint(rightX(), topY()));
+        CustomPoint p3 = rotatePoint(new CustomPoint(rightX(), bottomY()));
+        CustomPoint p4 = rotatePoint(new CustomPoint(leftX(), bottomY()));
+        corners[0] = p1;
+        corners[1] = p2;
+        corners[2] = p3;
+        corners[3] = p4;
+    }
+
+
     public CustomPoint[] getCorners() {
         return corners;
+    }
+
+    public void setDir(int dir) {
+        this.dir = dir;
+    }
+
+    public void setVelocity(double dx, double dy) {
+        this.dx = dx;
+        this.dy = dy;
+    }
+
+    public void setCenter_x(double x){
+        this.center_x = x;
+    }
+
+    public void setCenter_y(double y){
+        this.center_y = y;
     }
 
 

@@ -3,6 +3,8 @@ package net;
 import packet.Packet;
 import packet.Packet00Login;
 import packet.Packet12SinglePlayerUpdate;
+import packet.Packet13CourtUpdate;
+import packet.Packet14Sync;
 import packet.Serializer;
 import project.*;
 
@@ -10,6 +12,7 @@ import project.Court;
 
 import java.io.IOException;
 import java.net.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 public class GameServer extends Thread {
@@ -51,9 +54,10 @@ public class GameServer extends Thread {
             case LOGIN:
                 packet = new Packet00Login(data);
                 System.out.println("[" + address.getHostAddress() + ":" + port + "] Track: " + ((Packet00Login) packet).getTrackId() + " has connected to the server.");
-                addTrack(address, port, (Packet00Login) packet);
                 //TODO: sync all tracks
-                // send init ball logic
+                // send init ball logic somewhere
+                syncTracksToClient(address, port);
+                addTrack(address, port, (Packet00Login) packet);
                 break;
             case DISCONNECT:
                 break;
@@ -67,6 +71,11 @@ public class GameServer extends Thread {
                 break;
 
         }
+    }
+
+    private void syncTracksToClient(InetAddress address, int port){
+        Packet packet = new Packet14Sync(Serializer.serializeCourt(serverCourt).getBytes());
+        sendData(packet.getData(), address, port);
     }
 
     private void addTrack(InetAddress address, int port, Packet00Login packet) {

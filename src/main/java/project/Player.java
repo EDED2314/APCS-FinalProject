@@ -21,4 +21,8 @@ public class Player extends CustomRectangle {
     public void render(Graphics2D g2d, Color color){
         super.render(g2d, color);
     }
+
+    public void setScore(int score){
+        this.score = score;
+    }
 }
