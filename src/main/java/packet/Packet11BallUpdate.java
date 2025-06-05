@@ -2,6 +2,7 @@ package packet;
 
 import net.GameClient;
 import net.GameServer;
+import project.Constants;
 
 public class Packet11BallUpdate extends Packet {
 
@@ -12,10 +13,10 @@ public class Packet11BallUpdate extends Packet {
     private boolean fail = false;
 
     public Packet11BallUpdate(byte[] byteData) {
-        super(11);
+        super(PacketTypes.BALL_UPDATE.getId());
         String rawString = readData(byteData);
         String[] data = Serializer.processChunk(rawString);
-        if (!data[0].equals("b")) {
+        if (!data[0].equals(Constants.BALL_PACKET_HEADER)) {
             fail = true;
         }
         //vx vy x y
@@ -37,7 +38,7 @@ public class Packet11BallUpdate extends Packet {
 
     @Override
     public byte[] getData() {
-        return ("11" + Serializer.serializeBall(vx, vy, x, y)).getBytes();
+        return (PacketTypes.BALL_UPDATE.getId() + Serializer.serializeBall(vx, vy, x, y)).getBytes();
     }
 
     public double getX() {

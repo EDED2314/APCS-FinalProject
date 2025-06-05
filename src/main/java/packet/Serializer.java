@@ -1,9 +1,6 @@
 package packet;
 
-import project.Ball;
-import project.Court;
-import project.Player;
-import project.Track;
+import project.*;
 
 import java.util.ArrayList;
 
@@ -19,25 +16,32 @@ public class Serializer {
         return ret.toString(); // tracks and balls
     }
 
-//    public static String serializeCourt( ){
-//
-//    }
+    public static String serializeCourt( ArrayList<Packet12SinglePlayerUpdate> tracks, ArrayList<Packet11BallUpdate> balls){
+        StringBuilder ret = new StringBuilder();
+        for (Packet12SinglePlayerUpdate trackUpdate : tracks){
+            ret.append("|").append(serializeTrack(trackUpdate.getId(), trackUpdate.getX(), trackUpdate.getY(), trackUpdate.getDir(), trackUpdate.getScore()));
+        }
+        for (Packet11BallUpdate ballUpdate : balls) {
+            ret.append("|").append(serializeBall(ballUpdate.getVx(), ballUpdate.getVy(), ballUpdate.getX(), ballUpdate.getY()));
+        }
+        return ret.toString();
+    }
 
     public static String serializeBall(Ball ball) {
-        return "b;" + ball.dx + ";" + ball.dy + ";" + ball.center_x + ";" + ball.center_y; //vx vy x y
+        return Constants.BALL_PACKET_HEADER +  ";" + ball.dx + ";" + ball.dy + ";" + ball.center_x + ";" + ball.center_y; //vx vy x y
     }
 
     public static String serializeBall(double vx, double vy, double x, double y) {
-        return "b;" + vx + ";" + vy + ";" + x + ";" + y; //vx vy x y
+        return  Constants.BALL_PACKET_HEADER + ";" + vx + ";" + vy + ";" + x + ";" + y; //vx vy x y
     }
 
     public static String serializeTrack(Track track) {
         Player player = track.getPlayer();
-        return "t;" + track.getId() + ";" + player.center_x + ";" + player.center_y + ";" + player.dir + ";" + player.score; //id x y dir score
+        return  Constants.TRACK_PACKET_HEADER + ";" + track.getId() + ";" + player.center_x + ";" + player.center_y + ";" + player.dir + ";" + player.score; //id x y dir score
     }
 
     public static String serializeTrack(String id, double x, double y, int dir, int score) {
-        return "t;" + id + ";" + x + ";" + y + ";" + dir + ";" + score; //id x y dir score
+        return Constants.TRACK_PACKET_HEADER + ";" + id + ";" + x + ";" + y + ";" + dir + ";" + score; //id x y dir score
     }
 
     public static String[] processChunk(String data) {
@@ -45,13 +49,8 @@ public class Serializer {
         return ret;
     }
 
-    public static ArrayList<String[]> processMultipleChunks(String data) {
+    public static String[] processMultipleChunks(String data) {
         String[] chunks = data.split("|");
-        ArrayList<String[]> ret = new ArrayList<>();
-        for (String chunk : chunks) {
-            String[] processedChunk = processChunk(chunk);
-            ret.add(processedChunk);
-        }
-        return ret;
+        return chunks;
     }
 }

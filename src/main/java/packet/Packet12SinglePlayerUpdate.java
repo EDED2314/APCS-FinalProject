@@ -2,6 +2,7 @@ package packet;
 
 import net.GameClient;
 import net.GameServer;
+import project.Constants;
 
 public class Packet12SinglePlayerUpdate extends Packet {
 
@@ -13,10 +14,10 @@ public class Packet12SinglePlayerUpdate extends Packet {
     private boolean fail = false;
 
     public Packet12SinglePlayerUpdate(byte[] byteData) {
-        super(12);
+        super(PacketTypes.SINGLE_PLAYER_UPDATE.getId());
         String rawString = readData(byteData);
         String[] data = Serializer.processChunk(rawString);
-        if (!data[0].equals("t")) {
+        if (!data[0].equals(Constants.TRACK_PACKET_HEADER)) {
             fail = true;
         }
         //t: id x y dir score
@@ -39,7 +40,7 @@ public class Packet12SinglePlayerUpdate extends Packet {
 
     @Override
     public byte[] getData() {
-        return ("12" + Serializer.serializeTrack(id, x, y, dir, score)).getBytes();
+        return (PacketTypes.SINGLE_PLAYER_UPDATE.getId() + Serializer.serializeTrack(id, x, y, dir, score)).getBytes();
     }
 
     public String getId() {

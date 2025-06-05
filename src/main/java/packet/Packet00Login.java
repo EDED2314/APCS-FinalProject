@@ -8,13 +8,13 @@ public class Packet00Login extends Packet {
     private String trackId;
 
     public Packet00Login(byte[] data) {
-        super(00);
+        super(PacketTypes.LOGIN.getId());
         this.trackId = readData(data);
 
     }
 
     public Packet00Login(String trackId) {
-        super(00);
+        super(PacketTypes.LOGIN.getId());
         this.trackId = trackId;
     }
 
@@ -30,7 +30,7 @@ public class Packet00Login extends Packet {
 
     @Override
     public byte[] getData() {
-        return ("00" + this.trackId).getBytes();
+        return (PacketTypes.LOGIN.getId() + this.trackId).getBytes();
     }
 
     public String getTrackId() {

@@ -6,8 +6,8 @@ import net.GameServer;
 public abstract class Packet {
     public enum PacketTypes {
         INVALID(-1),
-        LOGIN(00),
-        DISCONNECT(01),
+        LOGIN(20),
+        DISCONNECT(21),
         BALL_UPDATE(11),
         SINGLE_PLAYER_UPDATE(12),
         ALL_UPDATE(13),
