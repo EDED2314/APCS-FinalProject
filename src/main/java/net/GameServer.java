@@ -2,6 +2,7 @@ package net;
 
 import packet.Packet;
 import packet.Packet00Login;
+import packet.Packet11BallUpdate;
 import packet.Packet12SinglePlayerUpdate;
 import packet.Packet13CourtUpdate;
 import packet.Packet14Sync;
@@ -33,7 +34,7 @@ public class GameServer extends Thread {
 
     public void run() {
         while (true) {
-            byte[] data = new byte[1024];
+            byte[] data = new byte[2048];
             DatagramPacket packet = new DatagramPacket(data, data.length);
             try {
                 socket.receive(packet);
@@ -41,6 +42,8 @@ public class GameServer extends Thread {
                 throw new RuntimeException(e);
             }
             this.parsePacket(packet.getData(), packet.getAddress(), packet.getPort());
+
+            updateBallAndBroadcast();
         }
     }
 
@@ -61,8 +64,8 @@ public class GameServer extends Thread {
                 break;
             case SINGLE_PLAYER_UPDATE:
                 packet = new Packet12SinglePlayerUpdate(data);
-                String id  =((Packet12SinglePlayerUpdate) packet).getId();
-                System.out.println("[" + address.getHostAddress() + ":" + port + "] Track: " +id + " sent a move update to the server");
+                String id = ((Packet12SinglePlayerUpdate) packet).getId();
+                System.out.println("[" + address.getHostAddress() + ":" + port + "] Track: " + id + " sent a move update to the server");
                 serverCourt.updateTrack(id, ((Packet12SinglePlayerUpdate) packet).getDir());
                 packet = new Packet12SinglePlayerUpdate(Serializer.serializeTrack(serverCourt.getTrackClient(id)).getBytes());
                 packet.writeData(this);
@@ -71,7 +74,20 @@ public class GameServer extends Thread {
         }
     }
 
-    private void syncTracksAndBallsToClient(InetAddress address, int port){
+    private void updateBallAndBroadcast() {
+        Constants.UpdateStatus status = serverCourt.updateBalls();
+        switch (status) {
+            //Lowkey just do this cuz we can access array of balls and also scores just like accessed yay
+            case BALLS_NEW_VELOCITY_AND_POINT:
+            case BALLS_NEW_VELOCITY:
+            case POINT:
+                Packet13CourtUpdate courtUpdate = new Packet13CourtUpdate(Serializer.serializeCourt(serverCourt).getBytes());
+                sendDataToAllClients(courtUpdate.getData());
+                break;
+        }
+    }
+
+    private void syncTracksAndBallsToClient(InetAddress address, int port) {
         Packet packet = new Packet14Sync(Serializer.serializeCourt(serverCourt).getBytes());
         sendData(packet.getData(), address, port);
     }

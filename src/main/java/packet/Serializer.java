@@ -45,12 +45,10 @@ public class Serializer {
     }
 
     public static String[] processChunk(String data) {
-        String[] ret = data.split(";");
-        return ret;
+        return data.split(";");
     }
 
     public static String[] processMultipleChunks(String data) {
-        String[] chunks = data.split("|");
-        return chunks;
+        return data.split("\\|");
     }
 }
