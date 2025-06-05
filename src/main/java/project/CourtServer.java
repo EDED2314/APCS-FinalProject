@@ -1,9 +1,7 @@
 package project;
 
-import java.awt.*;
-import java.awt.event.KeyEvent;
-
 public class CourtServer extends Court{
+
 
     public CourtServer(int radius, CustomPoint center, int playerNum) {
         super(radius, center, playerNum);
@@ -19,44 +17,43 @@ public class CourtServer extends Court{
     }
 
 
-    public boolean update(String trackId){
-        boolean whetherUpdateAllClients = false;
+    public Constants.UpdateStatus updateBalls(){
+        boolean updateClientsOnBallStatus = false;
         for (Ball ball : super.getBalls()) {
             ball.update();
-            //   System.out.println(ball.center_x + " " + ball.center_y );
             for (Track t : super.getTracks()) {
                 if (t.getPlayer() != null) {
                     if (ball.intersects(t.getPlayer())) {
                         ball.setPaddleReboundVelocity(t.getPlayer());
                         ball.assignNewLastHit(t.getId());
-                        whetherUpdateAllClients = true;
+                        updateClientsOnBallStatus = true;
                     }
                 } else {
                     double dis = ball.getBallToTrackDistance(t);
                     if (dis < 5) {
                         ball.setWallReboundVelocity(t);
-                        whetherUpdateAllClients = true;
+                        updateClientsOnBallStatus = true;
                     }
 
                 }
             }
 
         }
-//        if (whetherUpdateAllClients){
-//            //update all the clients on the new ball position
-//        }
 
-        //whetherUpdateAllClients = false;
+
+        boolean updateClientsForPoints = false;
         if (super.getTracks().size() >= 2) {
-            whetherUpdateAllClients = checkBallForGamePoint();
+            updateClientsForPoints = checkBallForGamePoint();
         }
-//        if (whetherUpdateAllClients){
-//            //update stuff
-//            //send court update
-//            // t: ID, score
-//            // ball position
-//        }
-        return whetherUpdateAllClients;
+
+        if (updateClientsForPoints && updateClientsOnBallStatus){
+            return Constants.UpdateStatus.BALLS_NEW_VELOCITY_AND_POINT;
+        }else if (updateClientsForPoints){
+            return Constants.UpdateStatus.POINT;
+        }else if (updateClientsOnBallStatus){
+            return Constants.UpdateStatus.BALLS_NEW_VELOCITY;
+        }
+        return Constants.UpdateStatus.NONE;
     }
 
 }

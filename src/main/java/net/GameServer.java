@@ -55,26 +55,25 @@ public class GameServer extends Thread {
             case LOGIN:
                 packet = new Packet00Login(data);
                 System.out.println("[" + address.getHostAddress() + ":" + port + "] Track: " + ((Packet00Login) packet).getTrackId() + " has connected to the server.");
-                addTrack(address, port,(Packet00Login) packet);
+                addTrack(address, port, (Packet00Login) packet);
                 break;
             case DISCONNECT:
                 break;
         }
     }
 
-    private void addTrack(InetAddress address, int port, Packet00Login packet){
-        boolean fail = false;
+    private void addTrack(InetAddress address, int port, Packet00Login packet) {
         for (TrackClient track : serverCourt.getTracks()) {
             if (track.getId().equals(packet.getTrackId())) {
                 throw new RuntimeException();
             }
         }
-        if (!fail) {
-            TrackClient t = new TrackClient(address, port, packet.getTrackId());
-            serverCourt.addTrack(t);
-            //server should send the newly connected player its location etc
-            sendDataToAllClients(packet.getData());
-        }
+
+        TrackClient t = new TrackClient(address, port, packet.getTrackId());
+        serverCourt.addTrack(t);
+        //server should send the newly connected player its location etc
+        sendDataToAllClients(packet.getData());
+
     }
 
     public void sendData(byte[] data, InetAddress ip, int port) {
@@ -87,7 +86,7 @@ public class GameServer extends Thread {
     }
 
     public void sendDataToAllClients(byte[] data) {
-        for (TrackClient connectedPlayer :  serverCourt.getTracks()) {
+        for (TrackClient connectedPlayer : serverCourt.getTracks()) {
             sendData(data, connectedPlayer.ipaddress, connectedPlayer.port);
         }
     }

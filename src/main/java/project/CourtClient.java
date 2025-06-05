@@ -21,24 +21,24 @@ public class CourtClient extends Court {
         }
     }
 
-    public int update(boolean[] keys, String trackId) {
+    public Constants.UpdateStatus update(boolean[] keys, String trackId) {
         for (TrackClient t : super.getTracks()) {
             if (t.getId().equals(trackId)) {
                 if (keys[KeyEvent.VK_A]) {
-                    return -1;
+                    return Constants.UpdateStatus.BACKWARDS;
                     //send here
                     //     t.getPlayer().setDir(-1);
                     //     t.update();
 
                 }
                 if (keys[KeyEvent.VK_D]) {
-                    return 1;
+                    return Constants.UpdateStatus.FORWARDS;
                     //   t.getPlayer().setDir(1);
                     // t.update();
                     //send broad here
                 }
             }
         }
-        return 0;
+        return Constants.UpdateStatus.NONE;
     }
 }

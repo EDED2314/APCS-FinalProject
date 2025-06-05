@@ -4,7 +4,7 @@ import net.GameClient;
 import net.GameServer;
 
 public abstract class Packet {
-    public static enum PacketTypes {
+    public enum PacketTypes {
         INVALID(-1), LOGIN(00), DISCONNECT(01);
 
         private final int packetId;

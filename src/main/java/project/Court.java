@@ -205,12 +205,6 @@ public abstract class Court {
         return t;
     }
 
-//    public void update(boolean[] keys, String trackId) {
-//
-//    }
-//
-//    public void render(Graphics2D g2d, String id) {
-//    }
 
     public boolean checkBallForGamePoint() {
         boolean changed = false;
@@ -253,8 +247,6 @@ public abstract class Court {
                 initBall();
 
 
-
-
             }
         }
         return changed;
@@ -285,7 +277,7 @@ public abstract class Court {
         refreshTrackConfiguration(t, Packet.PacketTypes.LOGIN);
     }
 
-//    public void addTrack(TrackClient e) {
+    //    public void addTrack(TrackClient e) {
 //        tracks.add(e);
 //    }
 //

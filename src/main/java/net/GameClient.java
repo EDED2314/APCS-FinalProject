@@ -52,27 +52,27 @@ public class GameClient extends Thread {
             case LOGIN:
                 packet = new Packet00Login(data);
                 System.out.println("[" + address.getHostAddress() + ":" + port + "] Track: " + ((Packet00Login) packet).getTrackId() + " has joined the game.");
-                addTrack(address, port,(Packet00Login) packet);
+                addTrack(address, port, (Packet00Login) packet);
                 break;
             case DISCONNECT:
                 break;
         }
     }
 
-    private void addTrack(InetAddress address, int port, Packet00Login packet){
-        boolean fail = false;
+    private void addTrack(InetAddress address, int port, Packet00Login packet) {
+
         for (TrackClient track : gameClient.getTracks()) {
             if (track.getId().equals(packet.getTrackId())) {
-               throw new RuntimeException();
+                throw new RuntimeException();
             }
         }
-        if (!fail) {
-            TrackClient t = new TrackClient(address, port, packet.getTrackId());
-            gameClient.addTrack(t);
-        }
+
+        TrackClient t = new TrackClient(address, port, packet.getTrackId());
+        gameClient.addTrack(t);
+
     }
 
-    public void sendData(byte[] data){
+    public void sendData(byte[] data) {
         DatagramPacket packet = new DatagramPacket(data, data.length, ipAddress, 1331);
         try {
             this.socket.send(packet);

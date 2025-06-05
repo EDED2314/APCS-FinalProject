@@ -103,12 +103,12 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
     }
 
     private void update() {
-        int status = gameClient.update(keys, playerId);
-        if (status == 1){
-            //forward
-
-        }else if (status == -1){
-            //reverse
+        Constants.UpdateStatus status = gameClient.update(keys, playerId);
+        switch (status){
+            case FORWARDS:
+                break;
+            case BACKWARDS:
+                break;
         }
     }
 
