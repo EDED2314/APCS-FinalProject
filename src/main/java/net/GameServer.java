@@ -54,9 +54,7 @@ public class GameServer extends Thread {
             case LOGIN:
                 packet = new Packet00Login(data);
                 System.out.println("[" + address.getHostAddress() + ":" + port + "] Track: " + ((Packet00Login) packet).getTrackId() + " has connected to the server.");
-                //TODO: sync all tracks
-                // send init ball logic somewhere
-                syncTracksToClient(address, port);
+                syncTracksAndBallsToClient(address, port);
                 addTrack(address, port, (Packet00Login) packet);
                 break;
             case DISCONNECT:
@@ -73,7 +71,7 @@ public class GameServer extends Thread {
         }
     }
 
-    private void syncTracksToClient(InetAddress address, int port){
+    private void syncTracksAndBallsToClient(InetAddress address, int port){
         Packet packet = new Packet14Sync(Serializer.serializeCourt(serverCourt).getBytes());
         sendData(packet.getData(), address, port);
     }
