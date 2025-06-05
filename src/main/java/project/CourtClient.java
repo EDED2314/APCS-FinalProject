@@ -15,7 +15,6 @@ public class CourtClient extends Court {
                 t.render(g2d, id);
             }
         }
-
         for (Ball b : super.getBalls()) {
             b.render(g2d);
         }
@@ -26,16 +25,9 @@ public class CourtClient extends Court {
             if (t.getId().equals(trackId)) {
                 if (keys[KeyEvent.VK_A]) {
                     return Constants.UpdateStatus.BACKWARDS;
-                    //send here
-                    //     t.getPlayer().setDir(-1);
-                    //     t.update();
-
                 }
                 if (keys[KeyEvent.VK_D]) {
                     return Constants.UpdateStatus.FORWARDS;
-                    //   t.getPlayer().setDir(1);
-                    // t.update();
-                    //send broad here
                 }
             }
         }

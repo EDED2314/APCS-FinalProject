@@ -2,7 +2,6 @@ package net;
 
 import packet.Packet;
 import packet.Packet00Login;
-import project.Court;
 import project.CourtClient;
 import project.TrackClient;
 
@@ -12,10 +11,10 @@ import java.net.*;
 public class GameClient extends Thread {
     public InetAddress ipAddress;
     private DatagramSocket socket;
-    private final CourtClient gameClient;
+    private final CourtClient clientCourt;
 
     public GameClient(CourtClient game, String ipAddress) {
-        this.gameClient = game;
+        this.clientCourt = game;
         try {
             this.socket = new DatagramSocket();
             this.ipAddress = InetAddress.getByName(ipAddress);
@@ -61,14 +60,14 @@ public class GameClient extends Thread {
 
     private void addTrack(InetAddress address, int port, Packet00Login packet) {
 
-        for (TrackClient track : gameClient.getTracks()) {
+        for (TrackClient track : clientCourt.getTracks()) {
             if (track.getId().equals(packet.getTrackId())) {
                 throw new RuntimeException();
             }
         }
 
         TrackClient t = new TrackClient(address, port, packet.getTrackId());
-        gameClient.addTrack(t);
+        clientCourt.addTrack(t);
 
     }
 

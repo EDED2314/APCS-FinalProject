@@ -2,7 +2,10 @@ package project;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import packet.Packet;
 
@@ -17,6 +20,7 @@ public abstract class Court {
             new CustomPoint(300, 300)};
 
     private ArrayList<TrackClient> tracks;
+    private Map<String, Integer> trackMapper = new HashMap<>();;
     private ArrayList<Ball> balls;
 
     private int radius;
@@ -30,24 +34,26 @@ public abstract class Court {
         balls = new ArrayList<Ball>();
 
         refreshTrackConfiguration(playerNum);
+        buildTrackMapper(tracks);
 
         initBall();
     }
 
-    private void initBall() {
-        Ball b1 = new Ball(10, (int) center.x, (int) center.y);
-        initBallVelocity(b1);
-        balls.add(b1);
+    private void buildTrackMapper(ArrayList<TrackClient> trackList) {
+        trackMapper.clear();
+        for (int i = 0; i < trackList.size(); i++) {
+            trackMapper.put(trackList.get(i).getId(), i);
+        }
     }
 
-
-    private void initBallVelocity(Ball b) {
+    private void initBall() {
+        Ball b1 = new Ball(10, (int) center.x, (int) center.y);
         double angle = (Math.random() * (Ball.MAX_BOUNCE_ANGLE) * 2 - (Ball.MAX_BOUNCE_ANGLE)) + 0.01; //generate random angle from -45 45
         double dx = Ball.BALL_SPEED * Math.cos(angle);
         double dy = -1 * Ball.BALL_SPEED * Math.sin(angle); //negative because y is flipped in the coordinate system
-        b.setVelocity(dx, dy);
+        b1.setVelocity(dx, dy);
+        balls.add(b1);
     }
-
 
     private void refreshTrackConfiguration(int playerNumber) {
         tracks = new ArrayList<TrackClient>();
@@ -257,8 +263,9 @@ public abstract class Court {
         for (Track t : tracks) {
             System.out.println("Track " + t.getId() + "| Score: " + t.getPlayer().score);
         }
-
     }
+
+
 
     public ArrayList<Ball> getBalls() {
         return balls;
@@ -268,34 +275,21 @@ public abstract class Court {
         return tracks;
     }
 
-//    public void addBall(Ball e) {
-//        balls.add(e);
-//    }
-
-
     public void addTrack(TrackClient t) {
         refreshTrackConfiguration(t, Packet.PacketTypes.LOGIN);
+        buildTrackMapper(tracks);
     }
 
-    //    public void addTrack(TrackClient e) {
-//        tracks.add(e);
-//    }
-//
+    public void removeTrack(TrackClient t){
+        refreshTrackConfiguration(t, Packet.PacketTypes.DISCONNECT);
+        buildTrackMapper(tracks);
+    }
+
     public void removeBall(int index) {
         balls.remove(index);
     }
-//
-//    public void removeBall(Ball e) {
-//        balls.remove(e);
-//    }
-//
-//    public void removeTrack(int index) {
-//        tracks.remove(index);
-//    }
-//
-//    public void removeTrack(Track e) {
-//        tracks.remove(e);
-//    }
 
-
+    public Map<String, Integer> getTrackMapper() {
+        return trackMapper;
+    }
 }

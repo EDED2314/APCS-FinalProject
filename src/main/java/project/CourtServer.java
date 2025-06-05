@@ -10,9 +10,13 @@ public class CourtServer extends Court{
 
 
     public void updateTrack(String trackId, int direction){
+        for (Track t : super.getTracks()){
+            if (t.getId().equals(trackId)){
+                t.getPlayer().setDir(direction);
+                t.update();
+            }
+        }
         // Find track t, and then update it.
-        //     t.getPlayer().setDir(-1);
-        //     t.update();
         // later broad cast it.
     }
 

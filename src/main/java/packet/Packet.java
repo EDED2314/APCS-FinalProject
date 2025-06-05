@@ -5,7 +5,13 @@ import net.GameServer;
 
 public abstract class Packet {
     public enum PacketTypes {
-        INVALID(-1), LOGIN(00), DISCONNECT(01);
+        INVALID(-1),
+        LOGIN(00),
+        DISCONNECT(01),
+        BALL_UPDATE(11),
+        SINGLE_PLAYER_UPDATE(12),
+        ALL_UPDATE(13),
+        ;
 
         private final int packetId;
 
@@ -34,10 +40,10 @@ public abstract class Packet {
         return message.substring(2);
     }
 
-    public abstract  byte[] getData();
+    public abstract byte[] getData();
 
     public static PacketTypes lookupPacket(String id) {
-        try{
+        try {
             return lookupPacket(Integer.parseInt(id));
         } catch (NumberFormatException e) {
             return PacketTypes.INVALID;

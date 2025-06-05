@@ -59,16 +59,6 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
         gameThread.start();
     }
 
-//    public void stopGame() {
-//        running = false;
-//        try {
-//            gameThread.join();
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//    }
-
-
     @Override
     public void run() {
         // fps control is interesting
@@ -106,6 +96,7 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
         Constants.UpdateStatus status = gameClient.update(keys, playerId);
         switch (status){
             case FORWARDS:
+                //send update to server
                 break;
             case BACKWARDS:
                 break;
