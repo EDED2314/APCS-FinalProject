@@ -90,7 +90,7 @@ public abstract class Court {
             case INVALID:
                 break;
             case LOGIN:
-                if (tracks.size() == 0) {
+                if (tracks.isEmpty()) {
                     // only start generating tracks at 2
                     tracks.add(targetTrack);
                     return;
@@ -122,7 +122,7 @@ public abstract class Court {
                 break;
 
             case DISCONNECT:
-                if (tracks.size() == 0) {
+                if (tracks.isEmpty()) {
                     //zero player case
                     return;
                 }

@@ -4,7 +4,7 @@ package project;
 import net.GameClient;
 import net.GameServer;
 
-import packet.Packet00Login;
+import packet.Packet20Login;
 import packet.Packet12SinglePlayerUpdate;
 import packet.Serializer;
 
@@ -54,7 +54,7 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
         socketClient = new GameClient(gameClient, "localhost");
         socketClient.start();
 
-        Packet00Login login = new Packet00Login(id);
+        Packet20Login login = new Packet20Login(id);
         //let the login packet handler class use the client to send its data via client to server
         login.writeData(socketClient);
 
@@ -62,6 +62,18 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
         running = true;
         gameThread = new Thread(this);
         gameThread.start();
+    }
+
+    public void stopGame() {
+        running = false;
+        try {
+            gameThread.join();
+            // create a disconnect packet!
+            //If only client is running, send disconnect to sever
+            //If client AND server are running, use packet to  send broadcast disconnect to EVERYONE.
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -150,6 +162,23 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                int confirm = JOptionPane.showConfirmDialog(
+                        frame,
+                        "Are you sure you want to exit the game?",
+                        "Exit Confirmation",
+                        JOptionPane.YES_NO_OPTION
+                );
+                if (confirm == JOptionPane.YES_OPTION) {
+                    game.stopGame();
+                    frame.dispose();
+                    System.exit(0);
+                }
+            }
+        });
 
         game.startGame();
     }

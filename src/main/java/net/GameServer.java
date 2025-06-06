@@ -46,17 +46,18 @@ public class GameServer extends Thread {
             case INVALID:
                 break;
             case LOGIN:
-                packet = new Packet00Login(data);
-                System.out.println("[" + address.getHostAddress() + ":" + port + "] Track: " + ((Packet00Login) packet).getTrackId() + " has connected to the server.");
+                packet = new Packet20Login(data);
+                System.out.println("Request from [" + address.getHostAddress() + ":" + port + "] Track: " + ((Packet20Login) packet).getTrackId() + " has connected to the server.");
                 syncTracksAndBallsToClient(address, port);
-                addTrack(address, port, (Packet00Login) packet);
+                addTrack(address, port, (Packet20Login) packet);
                 break;
             case DISCONNECT:
+
                 break;
             case SINGLE_PLAYER_UPDATE:
                 packet = new Packet12SinglePlayerUpdate(data);
                 String id = ((Packet12SinglePlayerUpdate) packet).getId();
-                System.out.println("[" + address.getHostAddress() + ":" + port + "] Track: " + id + " sent a move update to the server");
+                System.out.println("Request from [" + address.getHostAddress() + ":" + port + "] Track: " + id + " sent a move update to the server");
                 serverCourt.updateTrack(id, ((Packet12SinglePlayerUpdate) packet).getDir());
                 packet = new Packet12SinglePlayerUpdate(Serializer.serializeTrack(serverCourt.getTrackClient(id)).getBytes());
                 packet.writeData(this);
@@ -81,7 +82,7 @@ public class GameServer extends Thread {
         sendData(packet.getData(), address, port);
     }
 
-    private void addTrack(InetAddress address, int port, Packet00Login packet) {
+    private void addTrack(InetAddress address, int port, Packet20Login packet) {
         for (TrackClient track : serverCourt.getTracks()) {
             if (track.getId().equals(packet.getTrackId())) {
                 throw new RuntimeException();

@@ -50,9 +50,9 @@ public class GameClient extends Thread {
             case INVALID:
                 break;
             case LOGIN:
-                packet = new Packet00Login(data);
-                System.out.println("[" + address.getHostAddress() + ":" + port + "] Track: " + ((Packet00Login) packet).getTrackId() + " has joined the game.");
-                addTrack(address, port, (Packet00Login) packet);
+                packet = new Packet20Login(data);
+                System.out.println("[" + address.getHostAddress() + ":" + port + "] Track: " + ((Packet20Login) packet).getTrackId() + " has joined the game.");
+                addTrack(address, port, (Packet20Login) packet);
                 break;
             case DISCONNECT:
                 //TODO: implemnt delete tracks
@@ -60,21 +60,23 @@ public class GameClient extends Thread {
             case SINGLE_PLAYER_UPDATE:
                 packet = new Packet12SinglePlayerUpdate(data);
                 String id = ((Packet12SinglePlayerUpdate) packet).getId();
-                System.out.println("[" + address.getHostAddress() + ":" + port + "] Track: " + id + " successfully relayed its player update to player ___");
+                System.out.println("Server-side Track from [" + address.getHostAddress() + ":" + port + "] with id: " + id + ", successfully relayed its player update to playerside track!");
                 clientCourt.updateTrack(id, ((Packet12SinglePlayerUpdate) packet).getDir());
                 //done!
                 break;
             case SYNC:
                 packet = new Packet14Sync(data);
-                System.out.println("[" + address.getHostAddress() + ":" + port + "] " + clientCourt.getPlayerId() + " synced with server.");
+                System.out.println("Player id: [" + clientCourt.getPlayerId() + "]: received sync request with server: " + "[" + address.getHostAddress() + ":" + port + "]");
                 sync((Packet14Sync) packet);
                 break;
             case BALLS_UPDATE:
                 Packet15BallsUpdate ballsUpdatePacket = new Packet15BallsUpdate(data);
+                System.out.println("Player id: [" + clientCourt.getPlayerId() + "]: ballsUpdate request received from " + "[" + address.getHostAddress() + ":" + port + "]");
                 updateBalls(ballsUpdatePacket);
                 break;
             case PLAYER_POINTS_UPDATE:
                 Packet16PlayersPointUpdate playersPointUpdatePacket = new Packet16PlayersPointUpdate(data);
+                System.out.println("[" + clientCourt.getPlayerId() + "]: player points update request received from " + "[" + address.getHostAddress() + ":" + port + "]");
                 updatePlayerScores(playersPointUpdatePacket);
                 break;
         }
@@ -125,7 +127,7 @@ public class GameClient extends Thread {
         clientCourt.setTracks(trueTracks);
     }
 
-    private void addTrack(InetAddress address, int port, Packet00Login packet) {
+    private void addTrack(InetAddress address, int port, Packet20Login packet) {
         if (clientCourt.getTrackClient(packet.getTrackId()) == null) {
             throw new RuntimeException();
         }
