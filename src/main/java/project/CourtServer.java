@@ -82,14 +82,12 @@ public class CourtServer extends Court {
                     ArrayList<Track> others = new ArrayList<Track>(super.getTracks());
                     others.remove(closest);
                     for (Track ot : others) {
-                        ot.getPlayer().score++;
-                        changed = true;
+                        if (ot.getPlayer() != null) ot.getPlayer().score++; changed = true;
                     }
                 } else {
                     for (Track t : super.getTracks()) {
                         if (t.getId().equals(b.lastHitPaddleId)) {
-                            t.getPlayer().score++;
-                            changed = true;
+                           if (t.getPlayer() != null)  t.getPlayer().score++; changed = true;
                         }
                     }
                 }
