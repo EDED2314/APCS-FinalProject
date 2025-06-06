@@ -1,20 +1,11 @@
 package net;
 
-import packet.Packet;
-import packet.Packet00Login;
-import packet.Packet11BallUpdate;
-import packet.Packet12SinglePlayerUpdate;
-import packet.Packet13CourtUpdate;
-import packet.Packet14Sync;
-import packet.Serializer;
+import packet.*;
 import project.*;
-
-import project.Court;
 
 import java.io.IOException;
 import java.net.*;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
+import java.util.Objects;
 
 public class GameServer extends Thread {
     private DatagramSocket socket;
@@ -76,14 +67,12 @@ public class GameServer extends Thread {
 
     private void updateBallAndBroadcast() {
         Constants.UpdateStatus status = serverCourt.updateBalls();
-        switch (status) {
-            //Lowkey just do this cuz we can access array of balls and also scores just like accessed yay
-            case BALLS_NEW_VELOCITY_AND_POINT:
-            case BALLS_NEW_VELOCITY:
-            case POINT:
-                Packet13CourtUpdate courtUpdate = new Packet13CourtUpdate(Serializer.serializeCourt(serverCourt).getBytes());
-                sendDataToAllClients(courtUpdate.getData());
-                break;
+        Packet15BallsUpdate ballsUpdate = new Packet15BallsUpdate(Serializer.serializeCourt(serverCourt).getBytes());
+        sendDataToAllClients(ballsUpdate.getData());
+        //Lowkey just do this cuz we can access array of balls and also scores just like accessed yay
+        if (Objects.requireNonNull(status) == Constants.UpdateStatus.POINT) {
+            Packet16PlayersPointUpdate playersPointUpdate = new Packet16PlayersPointUpdate(Serializer.serializeCourt(serverCourt).getBytes());
+            sendDataToAllClients(playersPointUpdate.getData());
         }
     }
 

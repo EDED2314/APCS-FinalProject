@@ -26,10 +26,13 @@ public abstract class Court {
     private final int radius;
     private final CustomPoint center;
 
+    private String playerId;
 
-    public Court(int radius, CustomPoint center, int playerNum) {
+
+    public Court(int radius, CustomPoint center, int playerNum, String playerId) {
         this.radius = radius;
         this.center = center;
+        this.playerId = playerId;
 
         balls = new ArrayList<Ball>();
         tracks = refreshTrackConfiguration(playerNum);
@@ -238,6 +241,9 @@ public abstract class Court {
     }
 
     public TrackClient getTrackClient(String id){
+        if (trackMapper.get(id) == null){
+            return null;
+        }
         return tracks.get(trackMapper.get(id));
     }
 
@@ -255,5 +261,9 @@ public abstract class Court {
 
     public Map<String, Integer> getTrackMapper() {
         return trackMapper;
+    }
+
+    public String getPlayerId(){
+        return playerId;
     }
 }

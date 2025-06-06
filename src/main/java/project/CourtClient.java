@@ -6,8 +6,8 @@ import java.util.ArrayList;
 
 public class CourtClient extends Court {
 
-    public CourtClient(int radius, CustomPoint center, int playerNum) {
-        super(radius, center, playerNum);
+    public CourtClient(int radius, CustomPoint center, int playerNum, String playerId) {
+        super(radius, center, playerNum,  playerId );
     }
 
     public void render(Graphics2D g2d, String id) {

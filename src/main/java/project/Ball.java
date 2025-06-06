@@ -88,6 +88,7 @@ public class Ball extends CustomRectangle {
         return distance;
     }
 
+
     public int getId() {
         return id;
     }

@@ -26,8 +26,8 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
     private volatile boolean running = false;
     private boolean[] keys = new boolean[256];
 
-    private CourtClient gameClient = new CourtClient(HEIGHT / 2, new CustomPoint(WIDTH / (double) 2, HEIGHT / (double) 2), 0);
-    private CourtServer gameServer = new CourtServer(HEIGHT / 2, new CustomPoint(WIDTH / (double) 2, HEIGHT / (double) 2), 0);
+    private CourtClient gameClient;
+    private CourtServer gameServer;
     private GameClient socketClient;
     private GameServer socketServer;
 
@@ -40,6 +40,12 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
 
 
     public void startGame() {
+        String id = JOptionPane.showInputDialog(this, "Please enter a username");
+        playerId = id;
+
+        gameClient = new CourtClient(HEIGHT / 2, new CustomPoint(WIDTH / (double) 2, HEIGHT / (double) 2), 0, playerId);
+        gameServer = new CourtServer(HEIGHT / 2, new CustomPoint(WIDTH / (double) 2, HEIGHT / (double) 2), 0, playerId);
+
         if (JOptionPane.showConfirmDialog(this, "Do you want to run the server") == 0) {
             socketServer = new GameServer(gameServer, "localhost");
             socketServer.start();
@@ -48,9 +54,6 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
         socketClient = new GameClient(gameClient, "localhost");
         socketClient.start();
 
-
-        String id = JOptionPane.showInputDialog(this, "Please enter a username");
-        playerId = id;
         Packet00Login login = new Packet00Login(id);
         //let the login packet handler class use the client to send its data via client to server
         login.writeData(socketClient);

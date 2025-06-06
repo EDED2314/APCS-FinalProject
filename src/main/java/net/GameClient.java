@@ -1,11 +1,6 @@
 package net;
 
-import packet.Packet;
-import packet.Packet00Login;
-import packet.Packet11BallUpdate;
-import packet.Packet12SinglePlayerUpdate;
-import packet.Packet14Sync;
-import packet.Serializer;
+import packet.*;
 import project.Ball;
 import project.CourtClient;
 import project.TrackClient;
@@ -71,7 +66,36 @@ public class GameClient extends Thread {
                 break;
             case SYNC:
                 packet = new Packet14Sync(data);
+                System.out.println("[" + address.getHostAddress() + ":" + port + "] " + clientCourt.getPlayerId() + " synced with server.");
                 sync((Packet14Sync) packet);
+                break;
+            case BALLS_UPDATE:
+                Packet15BallsUpdate ballsUpdatePacket = new Packet15BallsUpdate(data);
+                updateBalls(ballsUpdatePacket);
+                break;
+            case PLAYER_POINTS_UPDATE:
+                Packet16PlayersPointUpdate playersPointUpdatePacket = new Packet16PlayersPointUpdate(data);
+                updatePlayerScores(playersPointUpdatePacket);
+                break;
+        }
+    }
+
+    private void updatePlayerScores(Packet16PlayersPointUpdate packet) {
+        for (Packet12SinglePlayerUpdate singlePlayerUpdate : packet.getPlayerUpdates()) {
+            TrackClient t = clientCourt.getTrackClient(singlePlayerUpdate.getId());
+            t.getPlayer().setScore(singlePlayerUpdate.getScore());
+        }
+    }
+
+    private void updateBalls(Packet15BallsUpdate packet) {
+        for (Packet11BallUpdate singleBallUpdate : packet.getBallUpdates()) {
+            for (Ball b : clientCourt.getBalls()) {
+                if (singleBallUpdate.getId() == b.getId()) {
+                    b.setVelocity(singleBallUpdate.getVx(), singleBallUpdate.getVy());
+                    b.setCenter_x(singleBallUpdate.getX());
+                    b.setCenter_y(singleBallUpdate.getY());
+                }
+            }
         }
     }
 
@@ -87,6 +111,7 @@ public class GameClient extends Thread {
         ArrayList<TrackClient> trueTracks = clientCourt.refreshTrackConfiguration(players.size());
         for (int i = 0; i < players.size(); i++) {
             //in this case we hop that the true tracks should be the same order as the plauer update
+            //this is because the trueTracks rn don't have any ID, so we can't use getTrackClient from the court class
             TrackClient t = trueTracks.get(i);
             Packet12SinglePlayerUpdate playerUpdate = players.get(i);
             t.setId(playerUpdate.getId());
@@ -101,16 +126,11 @@ public class GameClient extends Thread {
     }
 
     private void addTrack(InetAddress address, int port, Packet00Login packet) {
-
-        for (TrackClient track : clientCourt.getTracks()) {
-            if (track.getId().equals(packet.getTrackId())) {
-                throw new RuntimeException();
-            }
+        if (clientCourt.getTrackClient(packet.getTrackId()) == null) {
+            throw new RuntimeException();
         }
-
         TrackClient t = new TrackClient(address, port, packet.getTrackId());
         clientCourt.addTrack(t);
-
     }
 
     public void sendData(byte[] data) {

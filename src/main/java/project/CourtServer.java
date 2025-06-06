@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 public class CourtServer extends Court {
 
-    public CourtServer(int radius, CustomPoint center, int playerNum) {
-        super(radius, center, playerNum);
+    public CourtServer(int radius, CustomPoint center, int playerNum, String playerId) {
+        super(radius, center, playerNum, playerId);
         initBall();
     }
 
@@ -27,7 +27,6 @@ public class CourtServer extends Court {
 
 
     public Constants.UpdateStatus updateBalls() {
-        boolean updateClientsOnBallStatus = false;
         for (Ball ball : super.getBalls()) {
             ball.update();
             for (Track t : super.getTracks()) {
@@ -35,13 +34,11 @@ public class CourtServer extends Court {
                     if (ball.intersects(t.getPlayer())) {
                         ball.setPaddleReboundVelocity(t.getPlayer());
                         ball.assignNewLastHit(t.getId());
-                        updateClientsOnBallStatus = true;
                     }
                 } else {
                     double dis = ball.getBallToTrackDistance(t);
                     if (dis < 5) {
                         ball.setWallReboundVelocity(t);
-                        updateClientsOnBallStatus = true;
                     }
 
                 }
@@ -55,12 +52,8 @@ public class CourtServer extends Court {
             updateClientsForPoints = checkBallForGamePoint();
         }
 
-        if (updateClientsForPoints && updateClientsOnBallStatus) {
-            return Constants.UpdateStatus.BALLS_NEW_VELOCITY_AND_POINT;
-        } else if (updateClientsForPoints) {
+        if (updateClientsForPoints) {
             return Constants.UpdateStatus.POINT;
-        } else if (updateClientsOnBallStatus) {
-            return Constants.UpdateStatus.BALLS_NEW_VELOCITY;
         }
         return Constants.UpdateStatus.NONE;
     }

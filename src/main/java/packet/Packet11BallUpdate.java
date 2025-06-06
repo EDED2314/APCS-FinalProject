@@ -6,6 +6,7 @@ import project.Constants;
 
 public class Packet11BallUpdate extends Packet {
 
+    private int id;
     private double vx;
     private double vy;
     private double x;
@@ -19,11 +20,12 @@ public class Packet11BallUpdate extends Packet {
         if (!data[0].equals(Constants.BALL_PACKET_HEADER)) {
             fail = true;
         }
-        //vx vy x y
+        //vx vy x y id
         vx = Double.parseDouble(data[1]);
         vy = Double.parseDouble(data[2]);
         x = Double.parseDouble(data[3]);
         y = Double.parseDouble(data[4]);
+        id = Integer.parseInt(data[5]);
     }
 
     @Override
@@ -38,7 +40,7 @@ public class Packet11BallUpdate extends Packet {
 
     @Override
     public byte[] getData() {
-        return (PacketTypes.BALL_UPDATE.getId() + Serializer.serializeBall(vx, vy, x, y)).getBytes();
+        return (PacketTypes.BALL_UPDATE.getId() + Serializer.serializeBall(vx, vy, x, y, id)).getBytes();
     }
 
     public double getX() {
@@ -59,5 +61,9 @@ public class Packet11BallUpdate extends Packet {
 
     public boolean isFail() {
         return fail;
+    }
+
+    public int getId() {
+        return id;
     }
 }

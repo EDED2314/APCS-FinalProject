@@ -6,19 +6,16 @@ import project.Constants;
 
 import java.util.ArrayList;
 
-public class Packet13CourtUpdate extends Packet {
+public class Packet16PlayersPointUpdate extends Packet {
     private ArrayList<Packet12SinglePlayerUpdate> playerUpdates;
-    private ArrayList<Packet11BallUpdate> ballUpdates;
 
-    public Packet13CourtUpdate(byte[] byteData) {
-        super(PacketTypes.BALLS_AND_PLAYER_POINTS_UPDATE.getId());
+    public Packet16PlayersPointUpdate(byte[] byteData) {
+        super(PacketTypes.PLAYER_POINTS_UPDATE.getId());
         String rawString = readData(byteData);
         String[] chunks = Serializer.processMultipleChunks(rawString);
         for (String chunk : chunks){
             if (chunk.startsWith(Constants.TRACK_PACKET_HEADER)){
                 playerUpdates.add(new Packet12SinglePlayerUpdate((PacketTypes.SINGLE_PLAYER_UPDATE.getId()  + chunk).getBytes()));
-            }else if (chunk.startsWith(Constants.BALL_PACKET_HEADER)){
-                ballUpdates.add(new Packet11BallUpdate((PacketTypes.BALL_UPDATE.getId() + chunk).getBytes()));
             }
         }
     }
@@ -35,11 +32,7 @@ public class Packet13CourtUpdate extends Packet {
 
     @Override
     public byte[] getData() {
-        return (PacketTypes.BALLS_AND_PLAYER_POINTS_UPDATE.getId() + Serializer.serializeCourt(playerUpdates, ballUpdates) ).getBytes();
-    }
-
-    public ArrayList<Packet11BallUpdate> getBallUpdates() {
-        return ballUpdates;
+        return (PacketTypes.PLAYER_POINTS_UPDATE.getId() + Serializer.serializeCourt(playerUpdates, new ArrayList<>()) ).getBytes();
     }
 
     public ArrayList<Packet12SinglePlayerUpdate> getPlayerUpdates() {

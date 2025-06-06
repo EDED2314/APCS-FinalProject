@@ -22,17 +22,17 @@ public class Serializer {
             ret.append("|").append(serializeTrack(trackUpdate.getId(), trackUpdate.getX(), trackUpdate.getY(), trackUpdate.getDir(), trackUpdate.getScore()));
         }
         for (Packet11BallUpdate ballUpdate : balls) {
-            ret.append("|").append(serializeBall(ballUpdate.getVx(), ballUpdate.getVy(), ballUpdate.getX(), ballUpdate.getY()));
+            ret.append("|").append(serializeBall(ballUpdate.getVx(), ballUpdate.getVy(), ballUpdate.getX(), ballUpdate.getY(), ballUpdate.getId()));
         }
         return ret.toString();
     }
 
     public static String serializeBall(Ball ball) {
-        return Constants.BALL_PACKET_HEADER +  ";" + ball.dx + ";" + ball.dy + ";" + ball.center_x + ";" + ball.center_y; //vx vy x y
+        return Constants.BALL_PACKET_HEADER +  ";" + ball.dx + ";" + ball.dy + ";" + ball.center_x + ";" + ball.center_y + ";" + ball.getId() ; //vx vy x y id
     }
 
-    public static String serializeBall(double vx, double vy, double x, double y) {
-        return  Constants.BALL_PACKET_HEADER + ";" + vx + ";" + vy + ";" + x + ";" + y; //vx vy x y
+    public static String serializeBall(double vx, double vy, double x, double y, int id) {
+        return  Constants.BALL_PACKET_HEADER + ";" + vx + ";" + vy + ";" + x + ";" + y + ";" + id; //vx vy x y id
     }
 
     public static String serializeTrack(Track track) {

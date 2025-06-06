@@ -10,8 +10,10 @@ public abstract class Packet {
         DISCONNECT(21),
         BALL_UPDATE(11),
         SINGLE_PLAYER_UPDATE(12),
-        ALL_UPDATE(13),
+        BALLS_AND_PLAYER_POINTS_UPDATE(13),
         SYNC(14),
+        BALLS_UPDATE(15),
+        PLAYER_POINTS_UPDATE(16),
         ;
 
         private final int packetId;
