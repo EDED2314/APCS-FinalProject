@@ -34,7 +34,7 @@ public class GameServer extends Thread {
             }
             this.parsePacket(packet.getData(), packet.getAddress(), packet.getPort());
 
-            updateBallAndBroadcast();
+            if (serverCourt.getTracks().size() >= 3) updateBallAndBroadcast();
         }
     }
 
@@ -48,8 +48,9 @@ public class GameServer extends Thread {
             case LOGIN:
                 packet = new Packet20Login(data);
                 System.out.println("Request from [" + address.getHostAddress() + ":" + port + "] Track: " + ((Packet20Login) packet).getTrackId() + " has connected to the server.");
-                syncTracksAndBallsToClient(address, port);
                 addTrack(address, port, (Packet20Login) packet);
+                syncTracksAndBallsToAllClients();
+                //syncTracksAndBallsToClient(address, port);
                 break;
             case DISCONNECT:
 
@@ -66,19 +67,26 @@ public class GameServer extends Thread {
         }
     }
 
+
     private void updateBallAndBroadcast() {
         Constants.UpdateStatus status = serverCourt.updateBalls();
-        Packet15BallsUpdate ballsUpdate = new Packet15BallsUpdate(Serializer.serializeCourt(serverCourt).getBytes());
+        Packet15BallsUpdate ballsUpdate = new Packet15BallsUpdate((Packet.PacketTypes.BALLS_UPDATE.getId() + Serializer.serializeCourt(serverCourt)).getBytes());
         sendDataToAllClients(ballsUpdate.getData());
         //Lowkey just do this cuz we can access array of balls and also scores just like accessed yay
         if (Objects.requireNonNull(status) == Constants.UpdateStatus.POINT) {
-            Packet16PlayersPointUpdate playersPointUpdate = new Packet16PlayersPointUpdate(Serializer.serializeCourt(serverCourt).getBytes());
+            Packet16PlayersPointUpdate playersPointUpdate = new Packet16PlayersPointUpdate((Packet.PacketTypes.PLAYER_POINTS_UPDATE.getId() + Serializer.serializeCourt(serverCourt)).getBytes());
             sendDataToAllClients(playersPointUpdate.getData());
         }
     }
 
+    private void syncTracksAndBallsToAllClients() {
+        Packet packet = new Packet14Sync((Packet.PacketTypes.SYNC.getId() + Serializer.serializeCourt(serverCourt)).getBytes());
+        sendDataToAllClients(packet.getData());
+    }
+
+
     private void syncTracksAndBallsToClient(InetAddress address, int port) {
-        Packet packet = new Packet14Sync(Serializer.serializeCourt(serverCourt).getBytes());
+        Packet packet = new Packet14Sync((Packet.PacketTypes.SYNC.getId() + Serializer.serializeCourt(serverCourt)).getBytes());
         sendData(packet.getData(), address, port);
     }
 
@@ -91,10 +99,6 @@ public class GameServer extends Thread {
 
         TrackClient t = new TrackClient(address, port, packet.getTrackId());
         serverCourt.addTrack(t);
-        //server should send the newly connected player its location etc
-        // packet.writeData(this); <-- another implementation that works
-        sendDataToAllClients(packet.getData());
-
     }
 
     public void sendData(byte[] data, InetAddress ip, int port) {
@@ -105,6 +109,12 @@ public class GameServer extends Thread {
             throw new RuntimeException(e);
         }
     }
+
+//    public void sendDataToAllClientsExcluding(byte[] data, String trackId){
+//        for (TrackClient connectedPlayer : serverCourt.getTracks()) {
+//            if (!connectedPlayer.getId().equals(trackId)) sendData(data, connectedPlayer.ipaddress, connectedPlayer.port);
+//        }
+//    }
 
     public void sendDataToAllClients(byte[] data) {
         for (TrackClient connectedPlayer : serverCourt.getTracks()) {

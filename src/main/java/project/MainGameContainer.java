@@ -26,8 +26,8 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
     private volatile boolean running = false;
     private boolean[] keys = new boolean[256];
 
-    private CourtClient gameClient;
-    private CourtServer gameServer;
+    private CourtClient gameClient = new CourtClient(HEIGHT / 2, new CustomPoint(WIDTH / (double) 2, HEIGHT / (double) 2), 0, "");;
+    private CourtServer gameServer  = new CourtServer(HEIGHT / 2, new CustomPoint(WIDTH / (double) 2, HEIGHT / (double) 2), 0, "");;
     private GameClient socketClient;
     private GameServer socketServer;
 
@@ -43,8 +43,8 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
         String id = JOptionPane.showInputDialog(this, "Please enter a username");
         playerId = id;
 
-        gameClient = new CourtClient(HEIGHT / 2, new CustomPoint(WIDTH / (double) 2, HEIGHT / (double) 2), 0, playerId);
-        gameServer = new CourtServer(HEIGHT / 2, new CustomPoint(WIDTH / (double) 2, HEIGHT / (double) 2), 0, playerId);
+        gameClient.setPlayerId(id);
+        gameServer.setPlayerId(id);
 
         if (JOptionPane.showConfirmDialog(this, "Do you want to run the server") == 0) {
             socketServer = new GameServer(gameServer, "localhost");
@@ -111,6 +111,8 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
 
     private void update() {
         gameClient.update(keys, playerId);
+        if (gameClient.getTrackClient(playerId) == null) return;
+        if (gameClient.getTracks().size() < 3) return;
         Packet12SinglePlayerUpdate update = new Packet12SinglePlayerUpdate(Serializer.serializeTrack(gameClient.getTrackClient(playerId)).getBytes());
         socketClient.sendData(update.getData());
 
@@ -126,8 +128,8 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
         render(g);
 
         //debug
-        g.setColor(Color.RED);
-        g.drawString("Ball Position: " + gameClient.getBalls().get(0).center_x + ", " + gameClient.getBalls().get(0).center_y, 10, 20);
+//        g.setColor(Color.RED);
+//        g.drawString("Ball Position: " + gameClient.getBalls().get(0).center_x + ", " + gameClient.getBalls().get(0).center_y, 10, 20);
     }
 
     private void render(Graphics g) {

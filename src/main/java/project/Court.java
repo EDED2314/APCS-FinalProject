@@ -10,15 +10,6 @@ import java.util.Map;
 import packet.Packet;
 
 public abstract class Court {
-    private static final CustomPoint[] defaultConfig = {
-            new CustomPoint(10, 10),
-            new CustomPoint(10, 590),
-            new CustomPoint(10, 300),
-            new CustomPoint(590, 10),
-            new CustomPoint(590, 590),
-            new CustomPoint(590, 300),
-            new CustomPoint(300, 300)};
-
     private ArrayList<TrackClient> tracks;
     private Map<String, Integer> trackMapper = new HashMap<>();;
     private ArrayList<Ball> balls;
@@ -59,20 +50,9 @@ public abstract class Court {
 
     public ArrayList<TrackClient> refreshTrackConfiguration(int playerNumber) {
         ArrayList<TrackClient> localTracks = new ArrayList<TrackClient>();
-        if (playerNumber == 1) {
-            // only start generating tracks at 2
+        if (playerNumber < 3) {
+            // only start generating tracks at 3
             return  new ArrayList<TrackClient>();
-        }
-        if (playerNumber == 2) {
-            TrackClient left = new TrackClient(defaultConfig[0], defaultConfig[1], defaultConfig[2], 270, 0, 5, String.valueOf(Track.tracksInit));
-            TrackClient right = new TrackClient(defaultConfig[3], defaultConfig[4], defaultConfig[5], 270, 0, 5, String.valueOf(Track.tracksInit));
-            localTracks.add(left);
-            localTracks.add(right);
-            TrackClient top = new TrackClient(defaultConfig[0], defaultConfig[3], String.valueOf(Track.tracksInit));
-            TrackClient bottom = new TrackClient(defaultConfig[1], defaultConfig[4], String.valueOf(Track.tracksInit));
-            localTracks.add(top);
-            localTracks.add(bottom);
-            return localTracks;
         }
 
         double interiorAngle = ((180 * (playerNumber - 2)) / (double) playerNumber);
@@ -90,28 +70,13 @@ public abstract class Court {
             case INVALID:
                 break;
             case LOGIN:
-                if (tracks.isEmpty()) {
-                    // only start generating tracks at 2
+                if (tracks.size()<2) {
+                    //when the track has 2 people and a third one joins we want to run other stuff
                     tracks.add(targetTrack);
                     return;
                 }
-                if (tracks.size() == 1) {
-                    tracks.add(targetTrack);
-                    TrackClient top = new TrackClient(defaultConfig[0], defaultConfig[3], "top123456");
-                    TrackClient bottom = new TrackClient(defaultConfig[1], defaultConfig[4], "bottom123456");
-                    tracks.add(top);
-                    tracks.add(bottom);
-                    return;
-                }
-                int playerNumber = tracks.size() + 1;
-                if (tracks.get(tracks.size() - 1).getId().equals("bottom123456")) {
-                    // Right now the track array list like such: [0,1,2,3] -> [left right top bottom]. We want to remove top bottom cuz they fake players.
-                    tracks.remove(3);
-                    tracks.remove(2);
-                    playerNumber -= 2;
-                }
-
                 tracks.add(targetTrack);
+                int playerNumber = tracks.size();
 
                 double interiorAngle = ((180 * (playerNumber - 2)) / (double) playerNumber);
                 double adjustedAngle = 180 - interiorAngle;
@@ -126,34 +91,16 @@ public abstract class Court {
                     //zero player case
                     return;
                 }
-                if (tracks.size() == 1) {
-                    //1 player case
+                if (tracks.size() <= 3) {
+                    //1,2,3 player case
                     tracks.remove(targetTrack);
-                    return;
-                }
-                if (tracks.get(tracks.size() - 1).getId().equals("bottom123456")) {
-                    // two player case
-                    // Right now the track array list like such: [0,1,2,3] -> [left right top bottom]. We want to remove top bottom cuz they fake players.
-                    tracks.remove(3);
-                    tracks.remove(2);
-                    tracks.remove(targetTrack);
-                    return;
-                }
-
-                if (tracks.size() == 3) {
-                    //two player mode time!
-                    tracks.add(targetTrack);
-                    TrackClient top = new TrackClient(defaultConfig[0], defaultConfig[3], "top123456");
-                    TrackClient bottom = new TrackClient(defaultConfig[1], defaultConfig[4], "bottom123456");
-                    tracks.add(top);
-                    tracks.add(bottom);
                     return;
                 }
                 tracks.remove(targetTrack);
                 //formula from above method
-                double adjustedAngleRadianss = (180 - ((180 * (tracks.size() - 2)) / (double) tracks.size())) / 57.3;
+                adjustedAngleRadians = (180 - ((180 * (tracks.size() - 2)) / (double) tracks.size())) / 57.3;
                 for (int n = 0; n < tracks.size(); n++) {
-                    refreshTrack(n, adjustedAngleRadianss, tracks.get(n));
+                    refreshTrack(n, adjustedAngleRadians, tracks.get(n));
                 }
                 break;
         }
@@ -259,11 +206,11 @@ public abstract class Court {
         balls.remove(index);
     }
 
-    public Map<String, Integer> getTrackMapper() {
-        return trackMapper;
-    }
-
     public String getPlayerId(){
         return playerId;
+    }
+
+    public void setPlayerId(String id){
+        this.playerId = id;
     }
 }

@@ -37,6 +37,7 @@ public class Serializer {
 
     public static String serializeTrack(Track track) {
         Player player = track.getPlayer();
+
         return  Constants.TRACK_PACKET_HEADER + ";" + track.getId() + ";" + player.center_x + ";" + player.center_y + ";" + player.dir + ";" + player.score; //id x y dir score
     }
 

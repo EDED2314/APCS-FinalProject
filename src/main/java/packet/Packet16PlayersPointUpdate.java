@@ -11,6 +11,7 @@ public class Packet16PlayersPointUpdate extends Packet {
 
     public Packet16PlayersPointUpdate(byte[] byteData) {
         super(PacketTypes.PLAYER_POINTS_UPDATE.getId());
+        playerUpdates = new ArrayList<Packet12SinglePlayerUpdate>();
         String rawString = readData(byteData);
         String[] chunks = Serializer.processMultipleChunks(rawString);
         for (String chunk : chunks){

@@ -12,13 +12,15 @@ public class Packet13CourtUpdate extends Packet {
 
     public Packet13CourtUpdate(byte[] byteData) {
         super(PacketTypes.BALLS_AND_PLAYER_POINTS_UPDATE.getId());
+        playerUpdates = new ArrayList<Packet12SinglePlayerUpdate>();
+        ballUpdates = new ArrayList<Packet11BallUpdate>();
         String rawString = readData(byteData);
         String[] chunks = Serializer.processMultipleChunks(rawString);
         for (String chunk : chunks){
             if (chunk.startsWith(Constants.TRACK_PACKET_HEADER)){
-                playerUpdates.add(new Packet12SinglePlayerUpdate((PacketTypes.SINGLE_PLAYER_UPDATE.getId()  + chunk).getBytes()));
+                playerUpdates.add(new Packet12SinglePlayerUpdate((chunk).getBytes()));
             }else if (chunk.startsWith(Constants.BALL_PACKET_HEADER)){
-                ballUpdates.add(new Packet11BallUpdate((PacketTypes.BALL_UPDATE.getId() + chunk).getBytes()));
+                ballUpdates.add(new Packet11BallUpdate(( chunk).getBytes()));
             }
         }
     }

@@ -24,7 +24,7 @@ public class Track {
     Track(CustomPoint bound1, CustomPoint bound2, String id) {
         p1 = bound1;
         p2 = bound2;
-        p = null;
+        p = new Player(0,0, 0, 1,1);
         this.id = id;
         tracksInit++;
     }

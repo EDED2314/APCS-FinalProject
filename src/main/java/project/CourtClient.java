@@ -11,14 +11,15 @@ public class CourtClient extends Court {
     }
 
     public void render(Graphics2D g2d, String id) {
-        if (super.getTracks().size() >= 2) {
+        if (super.getTracks().size() >= 3) {
             for (Track t : super.getTracks()) {
                 t.render(g2d, id);
             }
+            for (Ball b : super.getBalls()) {
+                b.render(g2d);
+            }
         }
-        for (Ball b : super.getBalls()) {
-            b.render(g2d);
-        }
+
     }
 
     public void update(boolean[] keys, String trackId) {

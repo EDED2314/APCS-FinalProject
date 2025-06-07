@@ -49,11 +49,11 @@ public class GameClient extends Thread {
         switch (type) {
             case INVALID:
                 break;
-            case LOGIN:
-                packet = new Packet20Login(data);
-                System.out.println("[" + address.getHostAddress() + ":" + port + "] Track: " + ((Packet20Login) packet).getTrackId() + " has joined the game.");
-                addTrack(address, port, (Packet20Login) packet);
-                break;
+//            case LOGIN:
+//                packet = new Packet20Login(data);
+//                System.out.println("[" + address.getHostAddress() + ":" + port + "] Track: " + ((Packet20Login) packet).getTrackId() + " has joined the game.");
+//                addTrack(address, port, (Packet20Login) packet);
+//                break;
             case DISCONNECT:
                 //TODO: implemnt delete tracks
                 break;
@@ -104,6 +104,12 @@ public class GameClient extends Thread {
     private void sync(Packet14Sync packet) {
         ArrayList<Packet11BallUpdate> balls = packet.getBallUpdates();
         ArrayList<Packet12SinglePlayerUpdate> players = packet.getPlayerUpdates();
+
+        if (players.size() < 3){
+            //don't start syncing until >3 players!
+            return;
+        }
+
         ArrayList<Ball> trueBalls = new ArrayList<Ball>();
         for (Packet11BallUpdate ballUpdate : balls) {
             Ball b = new Ball(ballUpdate.getX(), ballUpdate.getY());
@@ -111,6 +117,8 @@ public class GameClient extends Thread {
             trueBalls.add(b);
         }
         ArrayList<TrackClient> trueTracks = clientCourt.refreshTrackConfiguration(players.size());
+        System.out.println(trueTracks);
+        System.out.println(players);
         for (int i = 0; i < players.size(); i++) {
             //in this case we hop that the true tracks should be the same order as the plauer update
             //this is because the trueTracks rn don't have any ID, so we can't use getTrackClient from the court class
@@ -127,13 +135,13 @@ public class GameClient extends Thread {
         clientCourt.setTracks(trueTracks);
     }
 
-    private void addTrack(InetAddress address, int port, Packet20Login packet) {
-        if (clientCourt.getTrackClient(packet.getTrackId()) == null) {
-            throw new RuntimeException();
-        }
-        TrackClient t = new TrackClient(address, port, packet.getTrackId());
-        clientCourt.addTrack(t);
-    }
+//    private void addTrack(InetAddress address, int port, Packet20Login packet) {
+//        if (clientCourt.getTrackClient(packet.getTrackId()) != null) {
+//            throw new RuntimeException();
+//        }
+//        TrackClient t = new TrackClient(address, port, packet.getTrackId());
+//        clientCourt.addTrack(t);
+//    }
 
     public void sendData(byte[] data) {
         DatagramPacket packet = new DatagramPacket(data, data.length, ipAddress, TrackClient.defaultPort);

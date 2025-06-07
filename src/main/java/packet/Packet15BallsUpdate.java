@@ -11,6 +11,7 @@ public class Packet15BallsUpdate extends Packet {
 
     public Packet15BallsUpdate(byte[] byteData) {
         super(PacketTypes.BALLS_UPDATE.getId());
+        ballUpdates = new ArrayList<Packet11BallUpdate>();
         String rawString = readData(byteData);
         String[] chunks = Serializer.processMultipleChunks(rawString);
         for (String chunk : chunks){

@@ -27,16 +27,6 @@ public class TrackClient extends Track {
         this.port = defaultPort;
     }
 
-    public TrackClient(CustomPoint bound1, CustomPoint bound2, String id) {
-        super(bound1, bound2, id);
-        try {
-            this.ipaddress = InetAddress.getByName(defaultIP);
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
-        this.port = defaultPort;
-    }
-
     public TrackClient(InetAddress ipaddress, int port, String id) {
         super(new CustomPoint(0, 0), new CustomPoint(0, 0), id);
         this.ipaddress = ipaddress;
