@@ -82,6 +82,7 @@ public class Track {
         g2d.setStroke(new BasicStroke(3));
         g2d.drawLine((int) p1.x, (int) p1.y, (int) p2.x, (int) p2.y);
         g2d.setStroke(new BasicStroke());
+        g2d.drawString("Player " + this.id, (int) labelPoint(p1, p2).x-20, (int) labelPoint(p1, p2).y);
         g2d.setColor(Color.BLACK);
 
         if (p != null) {
@@ -132,5 +133,10 @@ public class Track {
 
     public boolean equals(TrackClient other) {
         return other.getId().equals(this.getId());
+    }
+
+    public CustomPoint labelPoint(CustomPoint p1, CustomPoint p2) {
+        CustomPoint c = new CustomPoint(0.5*(p1.x + p2.x), 0.5*(p1.y + p2.y));
+        return new CustomPoint(400+(c.x-400)*0.8, 300+(c.y-300)*0.8);
     }
 }

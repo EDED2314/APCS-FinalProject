@@ -153,15 +153,6 @@ public abstract class Court {
         return new TrackClient(new CustomPoint(x1, y1), new CustomPoint(x2, y2), new CustomPoint(midx, midy), angle + Math.toRadians(90), velx, vely, String.valueOf(Track.tracksInit));
     }
 
-    private void displayScores() {
-        System.out.println("Scores: ");
-        for (Track t : tracks) {
-            System.out.println("Track " + t.getId() + "| Score: " + t.getPlayer().score);
-        }
-    }
-
-
-
     public ArrayList<Ball> getBalls() {
         return balls;
     }

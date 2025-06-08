@@ -56,6 +56,7 @@ public class GameServer extends Thread {
             case DISCONNECT:
                 packet = new Packet21Disconnect(data);
                 System.out.println("Request from [" + address.getHostAddress() + ":" + port + "] Track: " + ((Packet21Disconnect) packet).getTrackId() + " has disconnected from the server.");
+                deleteTrack((Packet21Disconnect) packet);
                 syncTracksAndBallsToAllClients();
                 break;
             case MASS_DISCONNECT:

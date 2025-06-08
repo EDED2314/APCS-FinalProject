@@ -40,18 +40,18 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
 
 
     public void startGame() {
-        String id = JOptionPane.showInputDialog(this, "Please enter a username");
+        String id = JOptionPane.showInputDialog(this, "Please enter your student ID\n(or a username <= 6 characters)");
         playerId = id;
 
         gameClient.setPlayerId(id);
         gameServer.setPlayerId(id);
 
         if (JOptionPane.showConfirmDialog(this, "Do you want to run the server") == 0) {
-            socketServer = new GameServer(gameServer, "localhost");
+            socketServer = new GameServer(gameServer, "0.0.0.0");
             socketServer.start();
         }
 
-        socketClient = new GameClient(gameClient, "localhost");
+        socketClient = new GameClient(gameClient, "192.168.86.111");
         socketClient.start();
 
         Packet20Login login = new Packet20Login(id);
@@ -120,7 +120,6 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
         Constants.UpdateStatus status = gameClient.update(keys, playerId);
         if (status != Constants.UpdateStatus.NONE) {
             Packet12SinglePlayerUpdate update = new Packet12SinglePlayerUpdate((Packet.PacketTypes.SINGLE_PLAYER_UPDATE + Serializer.serializeTrack(gameClient.getTrackClient(playerId))).getBytes());
-            System.out.println(update);
             update.writeData(socketClient);
         }
 

@@ -17,6 +17,10 @@ dependencies {
 
 }
 
+tasks.jar{
+    manifest.attributes["Main-Class"] = "project.MainGameContainer"
+}
+
 tasks.test {
     useJUnitPlatform()
 }
