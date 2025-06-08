@@ -66,4 +66,8 @@ public class Packet11BallUpdate extends Packet {
     public int getId() {
         return id;
     }
+
+    public String toString(){
+        return "Ball Packet for ball " + id + "| vx: " + vx + "| vy: " + vy + "| x: " + x + "| y:" + y;
+    }
 }

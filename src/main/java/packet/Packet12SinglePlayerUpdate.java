@@ -4,6 +4,8 @@ import net.GameClient;
 import net.GameServer;
 import project.Constants;
 
+import java.util.Arrays;
+
 public class Packet12SinglePlayerUpdate extends Packet {
 
     private String id;
@@ -63,7 +65,7 @@ public class Packet12SinglePlayerUpdate extends Packet {
         return score;
     }
 
-    public boolean isFail() {
-        return fail;
+    public String toString(){
+        return "SinglePlayerUpdate for Track with ID: " + id + "| dir:" + dir + "| score: " + score + "\n " + PacketTypes.SINGLE_PLAYER_UPDATE.getId() + Serializer.serializeTrack(id, x, y, dir, score);
     }
 }

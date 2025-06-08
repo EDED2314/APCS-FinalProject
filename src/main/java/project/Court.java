@@ -31,13 +31,6 @@ public abstract class Court {
         buildTrackMapper(tracks);
     }
 
-    public void setBalls(ArrayList<Ball> balls){
-        this.balls = balls;
-    }
-
-    public void setTracks(ArrayList<TrackClient> tracks){
-        this.tracks = tracks;
-    }
 
     private void buildTrackMapper(ArrayList<TrackClient> trackList) {
         trackMapper.clear();
@@ -181,6 +174,16 @@ public abstract class Court {
         refreshTrackConfiguration(t, Packet.PacketTypes.LOGIN);
         buildTrackMapper(tracks);
     }
+
+    public void setBalls(ArrayList<Ball> balls){
+        this.balls = balls;
+    }
+
+    public void setTracks(ArrayList<TrackClient> tracks){
+        this.tracks = tracks;
+        buildTrackMapper(tracks);
+    }
+
 
     public void removeTrack(TrackClient t){
         refreshTrackConfiguration(t, Packet.PacketTypes.DISCONNECT);

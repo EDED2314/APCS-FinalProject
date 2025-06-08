@@ -38,7 +38,7 @@ public class Packet14Sync extends Packet {
 
     @Override
     public byte[] getData() {
-        return (PacketTypes.SYNC.getId() + Serializer.serializeCourt(playerUpdates, ballUpdates) ).getBytes();
+        return (PacketTypes.SYNC.getId() + Serializer.serializeCourt(playerUpdates, ballUpdates, Constants.BALL_MODE + Constants.TRACK_MODE) ).getBytes();
     }
 
     public ArrayList<Packet11BallUpdate> getBallUpdates() {

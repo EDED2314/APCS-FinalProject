@@ -4,6 +4,7 @@ package project;
 import net.GameClient;
 import net.GameServer;
 
+import packet.Packet;
 import packet.Packet20Login;
 import packet.Packet12SinglePlayerUpdate;
 import packet.Serializer;
@@ -110,11 +111,15 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
     }
 
     private void update() {
-        gameClient.update(keys, playerId);
+        if (socketServer != null) socketServer.updateBallAndBroadcast();
         if (gameClient.getTrackClient(playerId) == null) return;
         if (gameClient.getTracks().size() < 3) return;
-        Packet12SinglePlayerUpdate update = new Packet12SinglePlayerUpdate(Serializer.serializeTrack(gameClient.getTrackClient(playerId)).getBytes());
-        socketClient.sendData(update.getData());
+        Constants.UpdateStatus status = gameClient.update(keys, playerId);
+        if (status != Constants.UpdateStatus.NONE){
+            Packet12SinglePlayerUpdate update = new Packet12SinglePlayerUpdate((Packet.PacketTypes.SINGLE_PLAYER_UPDATE +  Serializer.serializeTrack(gameClient.getTrackClient(playerId))).getBytes());
+            System.out.println(update);
+            update.writeData(socketClient);
+        }
 
     }
 

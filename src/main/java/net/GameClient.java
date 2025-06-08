@@ -49,15 +49,11 @@ public class GameClient extends Thread {
         switch (type) {
             case INVALID:
                 break;
-//            case LOGIN:
-//                packet = new Packet20Login(data);
-//                System.out.println("[" + address.getHostAddress() + ":" + port + "] Track: " + ((Packet20Login) packet).getTrackId() + " has joined the game.");
-//                addTrack(address, port, (Packet20Login) packet);
-//                break;
             case DISCONNECT:
                 //TODO: implemnt delete tracks
                 break;
             case SINGLE_PLAYER_UPDATE:
+
                 packet = new Packet12SinglePlayerUpdate(data);
                 String id = ((Packet12SinglePlayerUpdate) packet).getId();
                 System.out.println("Server-side Track from [" + address.getHostAddress() + ":" + port + "] with id: " + id + ", successfully relayed its player update to playerside track!");
@@ -71,7 +67,7 @@ public class GameClient extends Thread {
                 break;
             case BALLS_UPDATE:
                 Packet15BallsUpdate ballsUpdatePacket = new Packet15BallsUpdate(data);
-                System.out.println("Player id: [" + clientCourt.getPlayerId() + "]: ballsUpdate request received from " + "[" + address.getHostAddress() + ":" + port + "]");
+                //System.out.println("Player id: [" + clientCourt.getPlayerId() + "]: ballsUpdate request received from " + "[" + address.getHostAddress() + ":" + port + "]");
                 updateBalls(ballsUpdatePacket);
                 break;
             case PLAYER_POINTS_UPDATE:
@@ -90,22 +86,20 @@ public class GameClient extends Thread {
     }
 
     private void updateBalls(Packet15BallsUpdate packet) {
+        ArrayList<Ball> trueBalls = new ArrayList<Ball>();
         for (Packet11BallUpdate singleBallUpdate : packet.getBallUpdates()) {
-            for (Ball b : clientCourt.getBalls()) {
-                if (singleBallUpdate.getId() == b.getId()) {
-                    b.setVelocity(singleBallUpdate.getVx(), singleBallUpdate.getVy());
-                    b.setCenter_x(singleBallUpdate.getX());
-                    b.setCenter_y(singleBallUpdate.getY());
-                }
-            }
+            Ball b = new Ball(singleBallUpdate.getX(), singleBallUpdate.getY());
+            b.setVelocity(singleBallUpdate.getVx(), singleBallUpdate.getVy());
+            trueBalls.add(b);
         }
+        clientCourt.setBalls(trueBalls);
     }
 
     private void sync(Packet14Sync packet) {
         ArrayList<Packet11BallUpdate> balls = packet.getBallUpdates();
         ArrayList<Packet12SinglePlayerUpdate> players = packet.getPlayerUpdates();
 
-        if (players.size() < 3){
+        if (players.size() < 3) {
             //don't start syncing until >3 players!
             return;
         }
@@ -114,11 +108,12 @@ public class GameClient extends Thread {
         for (Packet11BallUpdate ballUpdate : balls) {
             Ball b = new Ball(ballUpdate.getX(), ballUpdate.getY());
             b.setVelocity(ballUpdate.getVx(), ballUpdate.getVy());
+            //System.out.println(b);
             trueBalls.add(b);
         }
         ArrayList<TrackClient> trueTracks = clientCourt.refreshTrackConfiguration(players.size());
-        System.out.println(trueTracks);
-        System.out.println(players);
+//        System.out.println(trueTracks);
+//        System.out.println(players);
         for (int i = 0; i < players.size(); i++) {
             //in this case we hop that the true tracks should be the same order as the plauer update
             //this is because the trueTracks rn don't have any ID, so we can't use getTrackClient from the court class

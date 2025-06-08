@@ -97,4 +97,8 @@ public class Ball extends CustomRectangle {
         return other.getId() == this.getId();
     }
 
+    public String toString(){
+        return "Ball: vx:" + super.dx + ", vy:" + super.dy + ", x:" + super.center_x + ", y:" + super.center_y;
+    }
+
 }

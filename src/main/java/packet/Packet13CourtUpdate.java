@@ -37,7 +37,7 @@ public class Packet13CourtUpdate extends Packet {
 
     @Override
     public byte[] getData() {
-        return (PacketTypes.BALLS_AND_PLAYER_POINTS_UPDATE.getId() + Serializer.serializeCourt(playerUpdates, ballUpdates) ).getBytes();
+        return (PacketTypes.BALLS_AND_PLAYER_POINTS_UPDATE.getId() + Serializer.serializeCourt(playerUpdates, ballUpdates, Constants.BALL_MODE + Constants.TRACK_MODE) ).getBytes();
     }
 
     public ArrayList<Packet11BallUpdate> getBallUpdates() {

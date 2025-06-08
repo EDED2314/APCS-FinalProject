@@ -27,6 +27,8 @@ public class CourtServer extends Court {
 
 
     public Constants.UpdateStatus updateBalls() {
+
+
         for (Ball ball : super.getBalls()) {
             ball.update();
             for (Track t : super.getTracks()) {

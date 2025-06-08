@@ -33,7 +33,7 @@ public class Packet16PlayersPointUpdate extends Packet {
 
     @Override
     public byte[] getData() {
-        return (PacketTypes.PLAYER_POINTS_UPDATE.getId() + Serializer.serializeCourt(playerUpdates, new ArrayList<>()) ).getBytes();
+        return (PacketTypes.PLAYER_POINTS_UPDATE.getId() + Serializer.serializeCourt(playerUpdates, new ArrayList<>(), Constants.TRACK_MODE) ).getBytes();
     }
 
     public ArrayList<Packet12SinglePlayerUpdate> getPlayerUpdates() {

@@ -5,8 +5,21 @@ import project.*;
 import java.util.ArrayList;
 
 public class Serializer {
-    public static String serializeCourt(Court court) {
+    public static String serializeCourt(Court court, String mode) {
         StringBuilder ret = new StringBuilder();
+        if (mode.equals(Constants.TRACK_MODE)){
+            for (Track t : court.getTracks()) {
+                ret.append("|").append(serializeTrack(t));
+            }
+            return ret.toString();
+        }
+        if (mode.equals(Constants.BALL_MODE)){
+            for (Ball b : court.getBalls()) {
+                ret.append("|").append(serializeBall(b));
+            }
+            return ret.toString();
+        }
+
         for (Ball b : court.getBalls()) {
             ret.append("|").append(serializeBall(b));
         }
@@ -16,8 +29,21 @@ public class Serializer {
         return ret.toString(); // tracks and balls
     }
 
-    public static String serializeCourt( ArrayList<Packet12SinglePlayerUpdate> tracks, ArrayList<Packet11BallUpdate> balls){
+    public static String serializeCourt( ArrayList<Packet12SinglePlayerUpdate> tracks, ArrayList<Packet11BallUpdate> balls, String mode){
         StringBuilder ret = new StringBuilder();
+
+        if (mode.equals(Constants.BALL_MODE)){
+            for (Packet11BallUpdate ballUpdate : balls) {
+                ret.append("|").append(serializeBall(ballUpdate.getVx(), ballUpdate.getVy(), ballUpdate.getX(), ballUpdate.getY(), ballUpdate.getId()));
+            }
+            return ret.toString();
+        }
+        if (mode.equals(Constants.TRACK_MODE)){
+            for (Packet12SinglePlayerUpdate trackUpdate : tracks){
+                ret.append("|").append(serializeTrack(trackUpdate.getId(), trackUpdate.getX(), trackUpdate.getY(), trackUpdate.getDir(), trackUpdate.getScore()));
+            }
+            return ret.toString();
+        }
         for (Packet12SinglePlayerUpdate trackUpdate : tracks){
             ret.append("|").append(serializeTrack(trackUpdate.getId(), trackUpdate.getX(), trackUpdate.getY(), trackUpdate.getDir(), trackUpdate.getScore()));
         }

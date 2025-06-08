@@ -22,14 +22,18 @@ public class CourtClient extends Court {
 
     }
 
-    public void update(boolean[] keys, String trackId) {
+    public Constants.UpdateStatus update(boolean[] keys, String trackId) {
         TrackClient t = getTrackClient(trackId);
         if (keys[KeyEvent.VK_A]) {
             t.getPlayer().setDir(-1);
+            return Constants.UpdateStatus.BACKWARD;
         }
         if (keys[KeyEvent.VK_D]) {
             t.getPlayer().setDir(1);
+            return Constants.UpdateStatus.FORWARD;
+
         }
+        return Constants.UpdateStatus.NONE;
     }
 
     public void updateTrack(String trackId, int direction) {

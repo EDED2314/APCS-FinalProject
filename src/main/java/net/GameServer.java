@@ -34,7 +34,7 @@ public class GameServer extends Thread {
             }
             this.parsePacket(packet.getData(), packet.getAddress(), packet.getPort());
 
-            if (serverCourt.getTracks().size() >= 3) updateBallAndBroadcast();
+
         }
     }
 
@@ -56,6 +56,7 @@ public class GameServer extends Thread {
 
                 break;
             case SINGLE_PLAYER_UPDATE:
+                System.out.println("Single player update packet recieved");
                 packet = new Packet12SinglePlayerUpdate(data);
                 String id = ((Packet12SinglePlayerUpdate) packet).getId();
                 System.out.println("Request from [" + address.getHostAddress() + ":" + port + "] Track: " + id + " sent a move update to the server");
@@ -68,27 +69,28 @@ public class GameServer extends Thread {
     }
 
 
-    private void updateBallAndBroadcast() {
+    public void updateBallAndBroadcast() {
+        if (serverCourt.getTracks().size() < 3) return;
         Constants.UpdateStatus status = serverCourt.updateBalls();
-        Packet15BallsUpdate ballsUpdate = new Packet15BallsUpdate((Packet.PacketTypes.BALLS_UPDATE.getId() + Serializer.serializeCourt(serverCourt)).getBytes());
+        Packet15BallsUpdate ballsUpdate = new Packet15BallsUpdate((Packet.PacketTypes.BALLS_UPDATE.getId() + Serializer.serializeCourt(serverCourt, Constants.BALL_MODE)).getBytes());
         sendDataToAllClients(ballsUpdate.getData());
         //Lowkey just do this cuz we can access array of balls and also scores just like accessed yay
         if (Objects.requireNonNull(status) == Constants.UpdateStatus.POINT) {
-            Packet16PlayersPointUpdate playersPointUpdate = new Packet16PlayersPointUpdate((Packet.PacketTypes.PLAYER_POINTS_UPDATE.getId() + Serializer.serializeCourt(serverCourt)).getBytes());
+            Packet16PlayersPointUpdate playersPointUpdate = new Packet16PlayersPointUpdate((Packet.PacketTypes.PLAYER_POINTS_UPDATE.getId() + Serializer.serializeCourt(serverCourt, Constants.TRACK_MODE)).getBytes());
             sendDataToAllClients(playersPointUpdate.getData());
         }
     }
 
     private void syncTracksAndBallsToAllClients() {
-        Packet packet = new Packet14Sync((Packet.PacketTypes.SYNC.getId() + Serializer.serializeCourt(serverCourt)).getBytes());
+        Packet packet = new Packet14Sync((Packet.PacketTypes.SYNC.getId() + Serializer.serializeCourt(serverCourt, Constants.TRACK_MODE + Constants.BALL_MODE)).getBytes());
         sendDataToAllClients(packet.getData());
     }
 
-
-    private void syncTracksAndBallsToClient(InetAddress address, int port) {
-        Packet packet = new Packet14Sync((Packet.PacketTypes.SYNC.getId() + Serializer.serializeCourt(serverCourt)).getBytes());
-        sendData(packet.getData(), address, port);
-    }
+//
+//    private void syncTracksAndBallsToClient(InetAddress address, int port) {
+//        Packet packet = new Packet14Sync((Packet.PacketTypes.SYNC.getId() + Serializer.serializeCourt(serverCourt)).getBytes());
+//        sendData(packet.getData(), address, port);
+//    }
 
     private void addTrack(InetAddress address, int port, Packet20Login packet) {
         for (TrackClient track : serverCourt.getTracks()) {
