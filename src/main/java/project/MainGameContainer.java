@@ -4,13 +4,12 @@ package project;
 import net.GameClient;
 import net.GameServer;
 
-import packet.Packet;
-import packet.Packet20Login;
-import packet.Packet12SinglePlayerUpdate;
-import packet.Serializer;
+import packet.*;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.net.URL;
+import java.util.Objects;
 
 import javax.swing.*;
 
@@ -27,8 +26,8 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
     private volatile boolean running = false;
     private boolean[] keys = new boolean[256];
 
-    private CourtClient gameClient = new CourtClient(HEIGHT / 2, new CustomPoint(WIDTH / (double) 2, HEIGHT / (double) 2), 0, "");;
-    private CourtServer gameServer  = new CourtServer(HEIGHT / 2, new CustomPoint(WIDTH / (double) 2, HEIGHT / (double) 2), 0, "");;
+    private CourtClient gameClient = new CourtClient(HEIGHT / 2, new CustomPoint(WIDTH / (double) 2, HEIGHT / (double) 2), 0, "");
+    private CourtServer gameServer = new CourtServer(HEIGHT / 2, new CustomPoint(WIDTH / (double) 2, HEIGHT / (double) 2), 0, "");
     private GameClient socketClient;
     private GameServer socketServer;
 
@@ -69,9 +68,13 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
         running = false;
         try {
             gameThread.join();
-            // create a disconnect packet!
-            //If only client is running, send disconnect to sever
-            //If client AND server are running, use packet to  send broadcast disconnect to EVERYONE.
+            if (socketServer == null) {
+                Packet21Disconnect disconnect = new Packet21Disconnect(playerId);
+                disconnect.writeData(socketClient);
+            } else {
+                Packet22MassDisconnect massDisconnect = new Packet22MassDisconnect();
+                massDisconnect.writeData(socketClient);
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -115,8 +118,8 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
         if (gameClient.getTrackClient(playerId) == null) return;
         if (gameClient.getTracks().size() < 3) return;
         Constants.UpdateStatus status = gameClient.update(keys, playerId);
-        if (status != Constants.UpdateStatus.NONE){
-            Packet12SinglePlayerUpdate update = new Packet12SinglePlayerUpdate((Packet.PacketTypes.SINGLE_PLAYER_UPDATE +  Serializer.serializeTrack(gameClient.getTrackClient(playerId))).getBytes());
+        if (status != Constants.UpdateStatus.NONE) {
+            Packet12SinglePlayerUpdate update = new Packet12SinglePlayerUpdate((Packet.PacketTypes.SINGLE_PLAYER_UPDATE + Serializer.serializeTrack(gameClient.getTrackClient(playerId))).getBytes());
             System.out.println(update);
             update.writeData(socketClient);
         }
@@ -164,26 +167,21 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
         JFrame frame = new JFrame("Multiplayer Pong");
         MainGameContainer game = new MainGameContainer();
 
+        ImageIcon icon = new ImageIcon(Objects.requireNonNull(MainGameContainer.class.getResource("/icon.png")));
+
         frame.add(game);
         frame.pack();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setIconImage(icon.getImage());
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
 
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                int confirm = JOptionPane.showConfirmDialog(
-                        frame,
-                        "Are you sure you want to exit the game?",
-                        "Exit Confirmation",
-                        JOptionPane.YES_NO_OPTION
-                );
-                if (confirm == JOptionPane.YES_OPTION) {
-                    game.stopGame();
-                    frame.dispose();
-                    System.exit(0);
-                }
+                game.stopGame();
+                frame.dispose();
+                System.exit(0);
             }
         });
 

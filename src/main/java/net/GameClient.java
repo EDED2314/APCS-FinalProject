@@ -3,6 +3,7 @@ package net;
 import packet.*;
 import project.Ball;
 import project.CourtClient;
+import project.MainGameContainer;
 import project.TrackClient;
 
 import java.io.IOException;
@@ -13,6 +14,7 @@ public class GameClient extends Thread {
     public InetAddress ipAddress;
     private DatagramSocket socket;
     private final CourtClient clientCourt;
+
 
     public GameClient(CourtClient game, String ipAddress) {
         this.clientCourt = game;
@@ -48,9 +50,6 @@ public class GameClient extends Thread {
         Packet packet = null;
         switch (type) {
             case INVALID:
-                break;
-            case DISCONNECT:
-                //TODO: implemnt delete tracks
                 break;
             case SINGLE_PLAYER_UPDATE:
                 packet = new Packet12SinglePlayerUpdate(data);
@@ -99,7 +98,11 @@ public class GameClient extends Thread {
         ArrayList<Packet12SinglePlayerUpdate> players = packet.getPlayerUpdates();
 
         if (players.size() < 3) {
-            //don't start syncing until >3 players!
+            if (clientCourt.getTracks().size() > players.size()){
+                //so basically a disconnect sync
+                clientCourt.setBalls(new ArrayList<>());
+                clientCourt.setTracks(new ArrayList<>());
+            }
             return;
         }
 
@@ -110,6 +113,9 @@ public class GameClient extends Thread {
             //System.out.println(b);
             trueBalls.add(b);
         }
+
+
+
         ArrayList<TrackClient> trueTracks = clientCourt.refreshTrackConfiguration(players.size());
 //        System.out.println(trueTracks);
 //        System.out.println(players);

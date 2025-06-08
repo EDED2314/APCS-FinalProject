@@ -1,6 +1,7 @@
 package project;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class CourtServer extends Court {
 
@@ -12,6 +13,11 @@ public class CourtServer extends Court {
     private void initBall() {
         Ball b1 = new Ball( (int) super.getCenter().x, (int) super.getCenter().y);
         double angle = (Math.random() * (Ball.MAX_BOUNCE_ANGLE) * 2 - (Ball.MAX_BOUNCE_ANGLE)) + 0.01; //generate random angle from -45 45
+
+        Random random = new Random();
+        boolean randomBoolean = random.nextBoolean();
+        if (randomBoolean) angle += Math.toRadians(180);
+
         double dx = Ball.BALL_SPEED * Math.cos(angle);
         double dy = -1 * Ball.BALL_SPEED * Math.sin(angle); //negative because y is flipped in the coordinate system
         b1.setVelocity(dx, dy);

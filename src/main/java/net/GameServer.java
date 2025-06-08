@@ -5,6 +5,7 @@ import project.*;
 
 import java.io.IOException;
 import java.net.*;
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class GameServer extends Thread {
@@ -53,7 +54,13 @@ public class GameServer extends Thread {
                 syncTracksAndBallsToAllClients();
                 break;
             case DISCONNECT:
-
+                packet = new Packet21Disconnect(data);
+                System.out.println("Request from [" + address.getHostAddress() + ":" + port + "] Track: " + ((Packet21Disconnect) packet).getTrackId() + " has disconnected from the server.");
+                syncTracksAndBallsToAllClients();
+                break;
+            case MASS_DISCONNECT:
+                System.out.println("Request from [" + address.getHostAddress() + ":" + port + "]  to mass disconnect...");
+                syncAndDeleteAll();
                 break;
             case SINGLE_PLAYER_UPDATE:
                 packet = new Packet12SinglePlayerUpdate(data);
@@ -85,6 +92,13 @@ public class GameServer extends Thread {
         sendDataToAllClients(packet.getData());
     }
 
+    private void syncAndDeleteAll() {
+        Packet packet = new Packet14Sync((Packet.PacketTypes.SYNC.getId() + Serializer.serializeCourt(new ArrayList<>(), new ArrayList<>(), Constants.TRACK_MODE + Constants.BALL_MODE)).getBytes());
+        sendDataToAllClients(packet.getData());
+        deleteAll();
+    }
+
+
 
     private void addTrack(InetAddress address, int port, Packet20Login packet) {
         for (TrackClient track : serverCourt.getTracks()) {
@@ -95,6 +109,16 @@ public class GameServer extends Thread {
 
         TrackClient t = new TrackClient(address, port, packet.getTrackId());
         serverCourt.addTrack(t);
+    }
+
+    private void deleteTrack(Packet21Disconnect packet) {
+        if (serverCourt.getTrackClient(packet.getTrackId()) != null)
+            serverCourt.removeTrack(serverCourt.getTrackClient(packet.getTrackId()));
+    }
+
+    private void deleteAll() {
+        serverCourt.setTracks(new ArrayList<>());
+        serverCourt.setBalls(new ArrayList<>());
     }
 
     public void sendData(byte[] data, InetAddress ip, int port) {

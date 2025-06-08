@@ -8,6 +8,7 @@ public abstract class Packet {
         INVALID(-1),
         LOGIN(20),
         DISCONNECT(21),
+        MASS_DISCONNECT(22),
         BALL_UPDATE(11),
         SINGLE_PLAYER_UPDATE(12),
         BALLS_AND_PLAYER_POINTS_UPDATE(13),
