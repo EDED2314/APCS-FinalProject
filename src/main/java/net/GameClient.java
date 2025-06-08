@@ -53,7 +53,6 @@ public class GameClient extends Thread {
                 //TODO: implemnt delete tracks
                 break;
             case SINGLE_PLAYER_UPDATE:
-
                 packet = new Packet12SinglePlayerUpdate(data);
                 String id = ((Packet12SinglePlayerUpdate) packet).getId();
                 System.out.println("Server-side Track from [" + address.getHostAddress() + ":" + port + "] with id: " + id + ", successfully relayed its player update to playerside track!");

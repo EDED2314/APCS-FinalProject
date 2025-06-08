@@ -19,9 +19,6 @@ public class Packet12SinglePlayerUpdate extends Packet {
         super(PacketTypes.SINGLE_PLAYER_UPDATE.getId());
         String rawString = readData(byteData);
         String[] data = Serializer.processChunk(rawString);
-        if (!data[0].equals(Constants.TRACK_PACKET_HEADER)) {
-            fail = true;
-        }
         //t: id x y dir score
         id = data[1];
         x = Double.parseDouble(data[2]);
@@ -32,12 +29,12 @@ public class Packet12SinglePlayerUpdate extends Packet {
 
     @Override
     public void writeData(GameClient client) {
-        if (!fail) client.sendData(getData());
+        client.sendData(getData());
     }
 
     @Override
     public void writeData(GameServer server) {
-        if (!fail) server.sendDataToAllClients(getData());
+      server.sendDataToAllClients(getData());
     }
 
     @Override
@@ -66,6 +63,6 @@ public class Packet12SinglePlayerUpdate extends Packet {
     }
 
     public String toString(){
-        return "SinglePlayerUpdate for Track with ID: " + id + "| dir:" + dir + "| score: " + score + "\n " + PacketTypes.SINGLE_PLAYER_UPDATE.getId() + Serializer.serializeTrack(id, x, y, dir, score);
+        return "SinglePlayerUpdate for Track with ID: " + id + "| dir:" + dir + "| score: " + score + "| fail: " + fail +  "\n " + PacketTypes.SINGLE_PLAYER_UPDATE.getId() + Serializer.serializeTrack(id, x, y, dir, score);
     }
 }

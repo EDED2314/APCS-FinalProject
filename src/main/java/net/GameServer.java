@@ -42,6 +42,7 @@ public class GameServer extends Thread {
         String message = new String(data).trim();
         Packet.PacketTypes type = Packet.lookupPacket(message.substring(0, 2));
         Packet packet = null;
+        System.out.println(type);
         switch (type) {
             case INVALID:
                 break;
@@ -50,18 +51,16 @@ public class GameServer extends Thread {
                 System.out.println("Request from [" + address.getHostAddress() + ":" + port + "] Track: " + ((Packet20Login) packet).getTrackId() + " has connected to the server.");
                 addTrack(address, port, (Packet20Login) packet);
                 syncTracksAndBallsToAllClients();
-                //syncTracksAndBallsToClient(address, port);
                 break;
             case DISCONNECT:
 
                 break;
             case SINGLE_PLAYER_UPDATE:
-                System.out.println("Single player update packet recieved");
                 packet = new Packet12SinglePlayerUpdate(data);
                 String id = ((Packet12SinglePlayerUpdate) packet).getId();
                 System.out.println("Request from [" + address.getHostAddress() + ":" + port + "] Track: " + id + " sent a move update to the server");
                 serverCourt.updateTrack(id, ((Packet12SinglePlayerUpdate) packet).getDir());
-                packet = new Packet12SinglePlayerUpdate(Serializer.serializeTrack(serverCourt.getTrackClient(id)).getBytes());
+                packet = new Packet12SinglePlayerUpdate((Packet.PacketTypes.SINGLE_PLAYER_UPDATE + Serializer.serializeTrack(serverCourt.getTrackClient(id))).getBytes());
                 packet.writeData(this);
                 break;
 
@@ -86,11 +85,6 @@ public class GameServer extends Thread {
         sendDataToAllClients(packet.getData());
     }
 
-//
-//    private void syncTracksAndBallsToClient(InetAddress address, int port) {
-//        Packet packet = new Packet14Sync((Packet.PacketTypes.SYNC.getId() + Serializer.serializeCourt(serverCourt)).getBytes());
-//        sendData(packet.getData(), address, port);
-//    }
 
     private void addTrack(InetAddress address, int port, Packet20Login packet) {
         for (TrackClient track : serverCourt.getTracks()) {
@@ -112,11 +106,6 @@ public class GameServer extends Thread {
         }
     }
 
-//    public void sendDataToAllClientsExcluding(byte[] data, String trackId){
-//        for (TrackClient connectedPlayer : serverCourt.getTracks()) {
-//            if (!connectedPlayer.getId().equals(trackId)) sendData(data, connectedPlayer.ipaddress, connectedPlayer.port);
-//        }
-//    }
 
     public void sendDataToAllClients(byte[] data) {
         for (TrackClient connectedPlayer : serverCourt.getTracks()) {
