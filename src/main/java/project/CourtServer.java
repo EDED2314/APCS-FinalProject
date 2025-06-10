@@ -10,7 +10,7 @@ public class CourtServer extends Court {
         initBall();
     }
 
-    private void initBall() {
+    public void initBall() {
         Ball b1 = new Ball( (int) super.getCenter().x, (int) super.getCenter().y);
         double angle = (Math.random() * (Ball.MAX_BOUNCE_ANGLE) * 2 - (Ball.MAX_BOUNCE_ANGLE)) + 0.01; //generate random angle from -45 45
 

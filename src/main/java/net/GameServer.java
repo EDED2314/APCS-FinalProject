@@ -50,6 +50,7 @@ public class GameServer extends Thread {
             case LOGIN:
                 packet = new Packet20Login(data);
                 System.out.println("Request from [" + address.getHostAddress() + ":" + port + "] Track: " + ((Packet20Login) packet).getTrackId() + " has connected to the server.");
+                addBall();
                 addTrack(address, port, (Packet20Login) packet);
                 syncTracksAndBallsToAllClients();
                 break;
@@ -100,6 +101,13 @@ public class GameServer extends Thread {
     }
 
 
+    private void addBall(){
+        if (serverCourt.getTracks().size() == 5){
+            serverCourt.initBall();
+        }else if (serverCourt.getTracks().size() == 9){
+            serverCourt.initBall();
+        }
+    }
 
     private void addTrack(InetAddress address, int port, Packet20Login packet) {
         for (TrackClient track : serverCourt.getTracks()) {
