@@ -1,6 +1,9 @@
 package project;
 
 import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.io.IOException;
+import java.io.InputStream;
 
 public class Track {
     static final double boundaryMinDistance = 10;
@@ -12,6 +15,9 @@ public class Track {
 
     private String id;
 
+    static final String FONT_PATH = "PressStart2P-Regular.ttf";
+    Font customGameFont;
+
     //angle is in degrees
     Track(CustomPoint bound1, CustomPoint bound2, CustomPoint center, double angle, double dx, double dy, String id) {
         p1 = bound1;
@@ -19,14 +25,31 @@ public class Track {
         p = new Player(center.x, center.y, angle / 57.3, dx, dy);
         this.id = id;
         tracksInit++;
+        loadCustomFont();
     }
 
     Track(CustomPoint bound1, CustomPoint bound2, String id) {
         p1 = bound1;
         p2 = bound2;
-        p = new Player(0,0, 0, 1,1);
+        p = new Player(0, 0, 0, 1, 1);
         this.id = id;
         tracksInit++;
+        loadCustomFont();
+    }
+
+    private void loadCustomFont() {
+
+        try {
+            InputStream is = getClass().getClassLoader().getResourceAsStream(FONT_PATH);
+            if (is != null) {
+                customGameFont = Font.createFont(Font.TRUETYPE_FONT, is);
+                is.close();
+            }
+        } catch (FontFormatException | IOException e) {
+            e.printStackTrace();
+            System.err.println("Error loading font. Falling back to default font.");
+            customGameFont = new Font("Monospaced", Font.BOLD, 24);
+        }
     }
 
     public Player getPlayer() {
@@ -82,13 +105,44 @@ public class Track {
         g2d.setStroke(new BasicStroke(3));
         g2d.drawLine((int) p1.x, (int) p1.y, (int) p2.x, (int) p2.y);
         g2d.setStroke(new BasicStroke());
-        g2d.drawString("Player " + this.id, (int) labelPoint(p1, p2).x-20, (int) labelPoint(p1, p2).y);
+
+        Font originalFont = g2d.getFont();
+        Font fontToUse = customGameFont.deriveFont(Font.PLAIN, 12);
+        g2d.setFont(fontToUse);
+
+        FontMetrics metrics = g2d.getFontMetrics(fontToUse);
+        int stringWidth = metrics.stringWidth(this.id);
+
+        CustomPoint labelPoint = labelPoint(p1, p2);
+        int textX = (int) labelPoint.x;
+        int textY = (int) labelPoint.y;
+
+        AffineTransform originalTransform = g2d.getTransform();
+        g2d.translate(textX, textY);
+
+        double dx_track = p2.x - p1.x;
+        double dy_track = p2.y - p1.y;
+        double trackAngle = Math.atan2(dy_track, dx_track);
+
+//        double trackAngle = p.angle;
+        if (trackAngle > Math.PI / 2 || trackAngle < -Math.PI / 2) {
+            trackAngle += Math.PI; // Add 180 degrees
+        }
+
+        g2d.rotate(trackAngle);
+
+        int drawX = -stringWidth / 2;
+        int drawY = -15;
+        g2d.drawString(this.id, drawX, drawY);
+
+        g2d.setTransform(originalTransform);
+        g2d.setFont(originalFont);
         g2d.setColor(Color.BLACK);
 
         if (p != null) {
-            if (this.id.equals(id)){
+            if (this.id.equals(id)) {
                 p.render(g2d, Color.GREEN);
-            }else{
+            } else {
                 p.render(g2d, Color.WHITE);
             }
 
@@ -127,7 +181,7 @@ public class Track {
         return id;
     }
 
-    public void setId(String id){
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -136,7 +190,6 @@ public class Track {
     }
 
     public CustomPoint labelPoint(CustomPoint p1, CustomPoint p2) {
-        CustomPoint c = new CustomPoint(0.5*(p1.x + p2.x), 0.5*(p1.y + p2.y));
-        return new CustomPoint(400+(c.x-400)*0.8, 300+(c.y-300)*0.8);
+        return new CustomPoint(0.5 * (p1.x + p2.x), 0.5 * (p1.y + p2.y));
     }
 }

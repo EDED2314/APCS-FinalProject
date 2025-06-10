@@ -89,12 +89,12 @@ public class CourtClient extends Court {
     }
 
     private void displayScores(Graphics2D g2) {
-        Rectangle box = new Rectangle(10, 15, 120, 15 * super.getTracks().size() + 5);
+        Rectangle box = new Rectangle(10, 15, 210, 15 * super.getTracks().size() + 5);
         g2.setColor(Color.WHITE);
         g2.draw(box);
 
         Font originalFont = g2.getFont();
-        Font derivedFont = customGameFont.deriveFont(Font.BOLD, 36f);
+        Font derivedFont = customGameFont.deriveFont(Font.PLAIN, 12);
         g2.setFont(derivedFont);
 
         for (int t = 0; t < super.getTracks().size(); t++) {
