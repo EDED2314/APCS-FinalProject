@@ -89,7 +89,7 @@ public class CourtClient extends Court {
     }
 
     private void displayScores(Graphics2D g2) {
-        Rectangle box = new Rectangle(10, 15, 210, 15 * super.getTracks().size() + 5);
+        Rectangle box = new Rectangle(10, 15, 120, 15 * super.getTracks().size() + 5);
         g2.setColor(Color.WHITE);
         g2.draw(box);
 
@@ -99,7 +99,7 @@ public class CourtClient extends Court {
 
         for (int t = 0; t < super.getTracks().size(); t++) {
             if (super.getTracks().get(t).getPlayer() != null) {
-                String text = "Player " + super.getTracks().get(t).getId() + ": " + super.getTracks().get(t).getPlayer().score;
+                String text = super.getTracks().get(t).getId() + ":" + super.getTracks().get(t).getPlayer().score;
                 g2.drawString(text, 15, 30 + t * 15);
             }
 

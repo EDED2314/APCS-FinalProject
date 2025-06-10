@@ -47,11 +47,11 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
         gameServer.setPlayerId(id);
 
         if (JOptionPane.showConfirmDialog(this, "Do you want to run the server") == 0) {
-            socketServer = new GameServer(gameServer, "localhost");
+            socketServer = new GameServer(gameServer, "0.0.0.0");
             socketServer.start();
         }
 
-        socketClient = new GameClient(gameClient, "localhost");
+        socketClient = new GameClient(gameClient, "100.67.145.80");
         socketClient.start();
 
         Packet20Login login = new Packet20Login(id);
