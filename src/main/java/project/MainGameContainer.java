@@ -51,7 +51,7 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
             socketServer.start();
         }
 
-        socketClient = new GameClient(gameClient, "192.168.86.111");
+        socketClient = new GameClient(gameClient, "100.67.145.80");
         socketClient.start();
 
         Packet20Login login = new Packet20Login(id);
