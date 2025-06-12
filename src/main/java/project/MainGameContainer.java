@@ -41,6 +41,10 @@ public class MainGameContainer extends JPanel implements Runnable, KeyListener {
 
     public void startGame() {
         String id = JOptionPane.showInputDialog(this, "Please enter your student ID\n(or a username <= 6 characters)");
+        if (id.length() > 6){
+            id = id.substring(0,6);
+        }
+
         playerId = id;
 
         gameClient.setPlayerId(id);
